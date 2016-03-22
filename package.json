@@ -1,0 +1,63 @@
+{
+  "name": "redux-touch",
+  "version": "0.0.1",
+  "description": "A Higher Form react-redux Component for Touch Sensitive Apps",
+  "main": "./lib/index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/phil303/redux-touch"
+  },
+  "scripts": {
+    "build": "babel src --out-dir lib",
+    "watch": "babel src --out-dir lib --watch",
+    "lint": "eslint src",
+    "prepublish": "npm run test && npm run build",
+    "test": "./node_modules/.bin/mocha --compilers js:babel-register --recursive 'src/**/__tests__/*' --require src/__tests__/setup.js",
+    "test:watch": "npm test -- --watch"
+  },
+  "keywords": [
+    "react",
+    "reactjs",
+    "flux",
+    "redux",
+    "react-redux",
+    "redux-touch",
+    "touch"
+  ],
+  "author": "Phil Aquilina <philaquilina@gmail.com> (http://github.com/phil303)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/phil303/redux-touch/issues"
+  },
+  "homepage": "https://github.com/phil303/redux-touch",
+  "devDependencies": {
+    "babel-cli": "6.6.4",
+    "babel-loader": "6.2.4",
+    "babel-plugin-transform-react-jsx": "6.4.0",
+    "babel-preset-es2015": "6.6.0",
+    "babel-preset-stage-2": "6.5.0",
+    "eslint": "2.4.0",
+    "eslint-config-airbnb": "6.1.0",
+    "eslint-loader": "1.3.0",
+    "eslint-plugin-react": "4.2.3",
+    "jsdom": "8.1.0",
+    "mocha": "2.4.5",
+    "react": "0.14.7",
+    "react-dom": "0.14.7",
+    "react-redux": "4.4.1",
+    "redux": "3.3.1"
+  },
+  "peerDependencies": {
+    "react-redux": "^4.0.0",
+    "redux": "^3.0.0"
+  },
+  "npmName": "redux-touch",
+  "npmFileMap": [
+    {
+      "basePath": "/dist/",
+      "files": [
+        "*.js"
+      ]
+    }
+  ]
+}

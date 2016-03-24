@@ -2,8 +2,10 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import isFunction from 'lodash/isFunction';
 import merge from 'lodash/merge';
+import filter from 'lodash/filter';
+import keys from 'lodash/keys';
 
-import getDerivedState from './getDerivedState';
+import computePosition from './computePosition';
 
 const T = React.PropTypes;
 
@@ -12,24 +14,22 @@ const INITIAL_STATE = {
     position: {
       initial: null,
       current: null,
-      final: null,
     }
   },
   touch: {
     position: {
       initial: null,
       current: null,
-      final: null,
     },
   },
 };
 
-const POSITION_KEYS = ['left', 'top', 'bottom', 'right'];
+const POSITION_KEYS = ['left', 'top', 'bottom', 'right', 'translateX', 'translateY'];
 
 class Touchable extends React.Component {
   static propTypes = {
     children: T.oneOfType([T.func, T.element]).isRequired,
-    style: T.objectOf(PropTypes.oneOfType([T.number, T.object])).isRequired,
+    style: T.objectOf(T.oneOfType([T.number, T.object])).isRequired,
     onTouchStart: T.func,
     onTouchEnd: T.func,
     onTouchMove: T.func,
@@ -40,14 +40,8 @@ class Touchable extends React.Component {
   _state = INITIAL_STATE;
 
   componentDidMount() {
-    const { style } = this.props;
-    const positions = filter(style, (_, k) => POSITION_KEYS.indexOf(k) > 0);
-    console.log("positions", positions);
-    const initial = positions.reduce((style, k) => {
-      style[k] = this.props.style[k];
-      return style;
-    }, {});
-    this._mergeState({ component: { position: initial } });
+    const initial = computePosition(this.props.style, { dx: 0, dy: 0 });
+    this._mergeState({ component: { position: { initial } } });
   }
 
   _mergeState(newState) {
@@ -55,10 +49,28 @@ class Touchable extends React.Component {
   }
 
   onTouchStart(e) {
+    // TODO: touches, targetTouches, or changedTouches
+    const { clientX: x, clientY: y } = e.nativeEvent.touches[0];
+    this._mergeState({ touch: { position: { initial: {x, y} } } })
+
     this._callPropsHandler('onTouchStart', e);
   }
 
   onTouchMove(e) {
+    const { clientX: x, clientY: y } = e.nativeEvent.touches[0];
+
+    const deltas = computeDeltas(
+      this._state.touch.position.current,
+      { x, y }
+    )
+
+    const positionStyle = computePosition(
+      this._state.component.position.current,
+      deltas
+    );
+
+    this._mergeState({ touch: { position: { current: {x, y} } } })
+
     this._callPropsHandler('onTouchMove', e);
   }
 

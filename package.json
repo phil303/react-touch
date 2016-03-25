@@ -40,6 +40,7 @@
     "eslint-plugin-react": "4.2.3",
     "jsdom": "8.1.0",
     "mocha": "2.4.5",
+    "raf": "3.2.0",
     "react": "0.14.7",
     "react-dom": "0.14.7"
   },

@@ -1,9 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import isFunction from 'lodash/isFunction';
-import merge from 'lodash/merge';
-import filter from 'lodash/filter';
-import keys from 'lodash/keys';
+import raf from 'raf';
 
 import computePosition from './computePosition';
 import computeDeltas from './computeDeltas';
@@ -44,17 +42,24 @@ class Touchable extends React.Component {
   }
 
   onTouchMove(e) {
-    const { clientX: x, clientY: y } = e.nativeEvent.touches[0];
+    if (!this._updatingPosition) {
+      const { clientX: x, clientY: y } = e.nativeEvent.touches[0];
+      raf(() => this._updatePosition({x, y}));
+    }
+    this._updatingPosition = true;
+    this._callPropsHandler('onTouchMove', e);
+  }
 
-    const deltas = computeDeltas(this.state.touch.current, { x, y });
-    const positionStyle = computePosition(this.state.component.current, deltas);
+  _updatePosition(touchPosition) {
+    this._updatingPosition = false;
+
+    const deltas = computeDeltas(this.state.touch.current, touchPosition);
+    const componentPosition = computePosition(this.state.component.current, deltas);
 
     this.setState({
-      touch: {current: { x, y }},
-      component: {current: positionStyle},
+      touch: {current: touchPosition},
+      component: {current: componentPosition},
     });
-
-    this._callPropsHandler('onTouchMove', e);
   }
 
   onTouchEnd(e) {

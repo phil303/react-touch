@@ -10,7 +10,6 @@ import computeDeltas from './computeDeltas';
 
 const T = React.PropTypes;
 
-const POSITION_KEYS = ['left', 'top', 'bottom', 'right', 'translateX', 'translateY'];
 
 class Touchable extends React.Component {
   static propTypes = {

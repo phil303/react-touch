@@ -58,16 +58,18 @@ class Touchable extends React.Component {
     const { clientX: x, clientY: y } = e.nativeEvent.touches[0];
     const dimensions = { position: { x, y }, time: new Date() };
 
-    const touch = merge({}, this.state.touch, {
-      initial: dimensions, 
-      current: dimensions
-    });
-    this.setState({ touch });
+    this.setState(merge({}, this.state, {
+      touch: {
+        initial: dimensions, 
+        current: dimensions
+      }
+    }));
 
     // configuration stuff
     this._holdDownTimer = window.setInterval(() => {
-      const touch = merge({}, this.state.touch, { current: { time: new Date() }})
-      this.setState({ touch });
+      this.setState(merge({}, this.state, { 
+        touch: { current: { time: new Date() }}
+      }));
     }, this.DEFAULT_HOLD_INTERVAL);
 
     this._holdReleaseTimer = window.setTimeout(() => {
@@ -90,15 +92,14 @@ class Touchable extends React.Component {
   _updatePosition(touchPosition) {
     this._updatingPosition = false;
 
-    const deltas = computeDeltas(this.state.touch.current, touchPosition);
-    const componentPosition = computePosition(this.state.component.current, deltas);
+    const { touch, component } = this.state;
+    const deltas = computeDeltas(touch.current.position, touchPosition);
+    const componentPosition = computePosition(component.current.position, deltas);
 
-    const state = merge({}, this.state, {
+    this.setState(merge({}, this.state, {
       touch: {current: { position: touchPosition }},
       component: {current: { position: componentPosition }},
-    });
-
-    this.setState({ state });
+    }));
   }
 
   onTouchEnd(e) {

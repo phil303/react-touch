@@ -53,42 +53,6 @@ class Touchable extends React.Component {
   DEFAULT_HOLD_INTERVAL = 250;
   DEFAULT_HOLD_LENGTH = 1000;
 
-  onTouchStart(e) {
-    // TODO: touches, targetTouches, or changedTouches
-    const { clientX: x, clientY: y } = e.nativeEvent.touches[0];
-    const dimensions = { position: { x, y }, time: new Date() };
-
-    this.setState(merge({}, this.state, {
-      touch: {
-        initial: dimensions, 
-        current: dimensions
-      }
-    }));
-
-    // configuration stuff
-    this._holdDownTimer = window.setInterval(() => {
-      this.setState(merge({}, this.state, { 
-        touch: { current: { time: new Date() }}
-      }));
-    }, this.DEFAULT_HOLD_INTERVAL);
-
-    this._holdReleaseTimer = window.setTimeout(() => {
-      this._callPropsHandler('onHold');
-    }, this.DEFAULT_HOLD_LENGTH);
-
-    this._callPropsHandler('onTouchStart', e);
-  }
-
-  onTouchMove(e) {
-    if (!this._updatingPosition) {
-      const { clientX: x, clientY: y } = e.nativeEvent.touches[0];
-      raf(() => this._updatePosition({x, y}));
-    }
-    this._updatingPosition = true;
-    this._clearHoldTimers();
-    this._callPropsHandler('onTouchMove', e);
-  }
-
   _updatePosition(touchPosition) {
     this._updatingPosition = false;
 
@@ -102,20 +66,13 @@ class Touchable extends React.Component {
     }));
   }
 
-  onTouchEnd(e) {
-    this._clearHoldTimers();
-    this._callPropsHandler('onTouchEnd', e);
+  _callPropsCallback(name, e) {
+    this.props[name] && this.props[name](e);
   }
 
   _clearHoldTimers() {
     window.clearInterval(this._holdDownTimer);
     window.clearTimeout(this._holdReleaseTimer);
-  }
-
-  _callPropsHandler(name, e) {
-    // handle user's touch handling
-    // TODO: there's not always an e
-    this.props[name] && this.props[name](e);
   }
 
   _calculateHoldPercent(current, initial) {
@@ -126,6 +83,55 @@ class Touchable extends React.Component {
     return 0;
   }
 
+  _handleTouchEvent(e, name, child) {
+    // call child's prop's callback
+    const callbackName = `on${name}`;
+    child.props[callbackName] && child.props[callbackName](e);
+
+    // then call own prop's callback
+    const handlerName = `handle${name}`;
+    this._callPropsCallback(callbackName, e);
+
+    // finally do own logic
+    this[handlerName](e);
+  };
+
+  handleTouchStart(e) {
+    // TODO: touches, targetTouches, or changedTouches
+    const { clientX: x, clientY: y } = e.nativeEvent.touches[0];
+    const dimensions = { position: { x, y }, time: new Date() };
+
+    this.setState(merge({}, this.state, {
+      touch: {
+        initial: dimensions, 
+        current: dimensions
+      }
+    }));
+
+    this._holdDownTimer = window.setInterval(() => {
+      this.setState(merge({}, this.state, { 
+        touch: { current: { time: new Date() }}
+      }));
+    }, this.DEFAULT_HOLD_INTERVAL);
+
+    this._holdReleaseTimer = window.setTimeout(() => {
+      this._callPropsCallback('onHold');
+    }, this.DEFAULT_HOLD_LENGTH);
+  }
+
+  handleTouchMove(e) {
+    if (!this._updatingPosition) {
+      const { clientX: x, clientY: y } = e.nativeEvent.touches[0];
+      raf(() => this._updatePosition({x, y}));
+    }
+    this._updatingPosition = true;
+    this._clearHoldTimers();
+  }
+
+  handleTouchEnd(e) {
+    this._clearHoldTimers();
+  }
+
   render() {
     const { children } = this.props;
     const { component, touch } = this.state;
@@ -133,10 +139,12 @@ class Touchable extends React.Component {
     const holdPercent = this._calculateHoldPercent(touch.current, touch.initial);
     const newProps = { ...component.current.position, holdPercent };
 
-    return React.cloneElement(React.Children.only(children(newProps)), {
-      onTouchStart: e => this.onTouchStart(e),
-      onTouchMove: e => this.onTouchMove(e),
-      onTouchEnd: e => this.onTouchEnd(e),
+    const child = children(newProps);
+
+    return React.cloneElement(React.Children.only(child), {
+      onTouchStart: (e) => this._handleTouchEvent(e, 'TouchStart', child),
+      onTouchMove: (e) => this._handleTouchEvent(e, 'TouchMove', child),
+      onTouchEnd: (e) => this._handleTouchEvent(e, 'TouchEnd', child),
     });
   }
 }

@@ -26,22 +26,12 @@ class Touchable extends React.Component {
 
   state = {
     component: {
-      initial: {
-        position: computePosition(this.props.style, { dx: 0, dy: 0 }),
-      },
-      current: {
-        position: computePosition(this.props.style, { dx: 0, dy: 0 }),
-      },
+      initial: { position: computePosition(this.props.style, { dx: 0, dy: 0 }) },
+      current: { position: computePosition(this.props.style, { dx: 0, dy: 0 }) },
     },
     touch: {
-      initial: {
-        position: null,
-        time: null
-      },
-      current: {
-        position: null,
-        time: null
-      },
+      initial: { position: null, time: null },
+      current: { position: null, time: null },
     }
   };
 
@@ -120,6 +110,7 @@ class Touchable extends React.Component {
   }
 
   handleTouchMove(e) {
+    e.preventDefault();
     if (!this._updatingPosition) {
       const { clientX: x, clientY: y } = e.nativeEvent.touches[0];
       raf(() => this._updatePosition({x, y}));

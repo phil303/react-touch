@@ -6,23 +6,9 @@ import filter from 'lodash/filter';
 import keys from 'lodash/keys';
 
 import computePosition from './computePosition';
+import computeDeltas from './computeDeltas';
 
 const T = React.PropTypes;
-
-const INITIAL_STATE = {
-  component: {
-    position: {
-      initial: null,
-      current: null,
-    }
-  },
-  touch: {
-    position: {
-      initial: null,
-      current: null,
-    },
-  },
-};
 
 const POSITION_KEYS = ['left', 'top', 'bottom', 'right', 'translateX', 'translateY'];
 
@@ -37,21 +23,23 @@ class Touchable extends React.Component {
     onHold: T.func,
   };
 
-  _state = INITIAL_STATE;
-
-  componentDidMount() {
-    const initial = computePosition(this.props.style, { dx: 0, dy: 0 });
-    this._mergeState({ component: { position: { initial } } });
-  }
-
-  _mergeState(newState) {
-    this._state = merge({}, this._state, newState);
-  }
+  state = {
+    component: {
+      initial: computePosition(this.props.style, { dx: 0, dy: 0 }),
+      current: computePosition(this.props.style, { dx: 0, dy: 0 }),
+    },
+    touch: {
+      initial: null,
+      current: null,
+    }
+  };
 
   onTouchStart(e) {
     // TODO: touches, targetTouches, or changedTouches
     const { clientX: x, clientY: y } = e.nativeEvent.touches[0];
-    this._mergeState({ touch: { position: { initial: {x, y} } } })
+    this.setState({ 
+      touch: {initial: { x, y }, current: { x, y }}
+    });
 
     this._callPropsHandler('onTouchStart', e);
   }
@@ -59,17 +47,13 @@ class Touchable extends React.Component {
   onTouchMove(e) {
     const { clientX: x, clientY: y } = e.nativeEvent.touches[0];
 
-    const deltas = computeDeltas(
-      this._state.touch.position.current,
-      { x, y }
-    )
+    const deltas = computeDeltas(this.state.touch.current, { x, y });
+    const positionStyle = computePosition(this.state.component.current, deltas);
 
-    const positionStyle = computePosition(
-      this._state.component.position.current,
-      deltas
-    );
-
-    this._mergeState({ touch: { position: { current: {x, y} } } })
+    this.setState({
+      touch: {current: { x, y }},
+      component: {current: positionStyle},
+    });
 
     this._callPropsHandler('onTouchMove', e);
   }
@@ -79,17 +63,15 @@ class Touchable extends React.Component {
   }
 
   _callPropsHandler(name, e) {
-    // handle user's touch event
+    // handle user's touch handling
     this.props[name] && this.props[name](e);
-  }
-
-  reset() {
-    this._state = { ...this._state, ...INITIAL_STATE };
   }
 
   render() {
     const { children } = this.props;
-    const renderedChildren = isFunction(children) ? children({}) : children;
+    const { component: position } = this.state;
+
+    const renderedChildren = isFunction(children) ? children(position.current) : children;
     return React.cloneElement(React.Children.only(renderedChildren), {
       onTouchStart: e => this.onTouchStart(e),
       onTouchMove: e => this.onTouchMove(e),

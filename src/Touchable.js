@@ -36,6 +36,8 @@ class Touchable extends React.Component {
     },
   };
 
+  _handleTouchMove = (e) => this.handleTouchMove(e);
+  _handleTouchEnd = (e) => this.handleTouchEnd(e);
   _updatingPosition = false;
   _clearHoldTimers = null;
 
@@ -52,10 +54,6 @@ class Touchable extends React.Component {
     }));
   }
 
-  _callPropsCallback(name, e) {
-    this.props[name] && this.props[name](e);
-  }
-
   _resetTouch() {
     this.setState(merge({}, this.state, {
       touch: { 
@@ -65,20 +63,15 @@ class Touchable extends React.Component {
     }));
   }
 
-  _handleTouchEvent(e, name, child) {
-    // call child's prop's callback
-    const callbackName = `on${name}`;
-    child.props[callbackName] && child.props[callbackName](e);
+  handleTouchStart(e, child) {
+    // add event handlers to the body
+    document.addEventListener('touchmove', this._handleTouchMove);
+    document.addEventListener('touchend', this._handleTouchEnd);
 
-    // then call own prop's callback
-    const handlerName = `handle${name}`;
-    this._callPropsCallback(callbackName, e);
-
-    // finally do own logic
-    this[handlerName](e);
-  };
-
-  handleTouchStart(e) {
+    // call child's and own callback from props since we're overwriting it
+    child.props.onTouchStart && child.props.onTouchStart(e);
+    this.props.onTouchStart && this.props.onTouchStart(e);
+    
     const { clientX: x, clientY: y } = e.nativeEvent.touches[0];
     const dimensions = { position: { x, y }, time: new Date() };
 
@@ -121,6 +114,8 @@ class Touchable extends React.Component {
   }
 
   handleTouchEnd(e) {
+    document.removeEventListener('touchmove', this._handleTouchMove);
+    document.removeEventListener('touchend', this._handleTouchEnd);
     this._clearHoldTimers();
     this._resetTouch();
   }
@@ -135,9 +130,7 @@ class Touchable extends React.Component {
     const child = children(newProps);
 
     return React.cloneElement(React.Children.only(child), {
-      onTouchStart: (e) => this._handleTouchEvent(e, 'TouchStart', child),
-      onTouchMove: (e) => this._handleTouchEvent(e, 'TouchMove', child),
-      onTouchEnd: (e) => this._handleTouchEvent(e, 'TouchEnd', child),
+      onTouchStart: (e) => this.handleTouchStart(e, child),
     });
   }
 }

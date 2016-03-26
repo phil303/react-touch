@@ -32,8 +32,8 @@ class Touchable extends React.Component {
     },
     touch: {
       initial: { position: null, time: null },
-      current: { position: null, time: null },
-    }
+      current: { position: null, time: null, duration: 0 },
+    },
   };
 
   _updatingPosition = false;
@@ -56,19 +56,11 @@ class Touchable extends React.Component {
     this.props[name] && this.props[name](e);
   }
 
-  _calculateHoldPercent(current, initial) {
-    if (current.time) {
-      const percent = (current.time - initial.time) / this.DEFAULT_HOLD_LENGTH;
-      return clamp(percent, 0, 1);
-    }
-    return 0;
-  }
-
   _resetTouch() {
     this.setState(merge({}, this.state, {
       touch: { 
         initial: { position: null, time: null },
-        current: { position: null, time: null },
+        current: { position: null, time: null, duration: 0 },
       },
     }));
   }
@@ -87,10 +79,10 @@ class Touchable extends React.Component {
   };
 
   handleTouchStart(e) {
-    // TODO: touches, targetTouches, or changedTouches
     const { clientX: x, clientY: y } = e.nativeEvent.touches[0];
     const dimensions = { position: { x, y }, time: new Date() };
 
+    // set initial conditions for the touch event
     this.setState(merge({}, this.state, {
       touch: {
         initial: dimensions, 
@@ -98,16 +90,23 @@ class Touchable extends React.Component {
       }
     }));
 
+    // create a callback that will be used after each hold interval
+    const setTimeState = holdLength => {
+      const time = new Date();
+      const duration = (time - this.state.touch.initial.time) / holdLength;
+      this.setState(merge({}, this.state, {
+        touch: { current: { time, duration: clamp(duration, 0, 1) } }
+      }));
+    }
+
+    // some trickery here. We want to allow both config-wrapped callbacks and 
+    // normal callbacks. When we wrap a callback we add a `wrapped` property 
+    // and check for that here. If it doesn't exist, wrap it (with the
+    // defaults)
     if (this.props.onHold.wrapped) {
-      this._clearHoldTimers = this.props.onHold(
-        this.state,
-        this.setState.bind(this),
-      );
+      this._clearHoldTimers = this.props.onHold(setTimeState)
     } else {
-      this._clearHoldTimers = defineHold()(this.props.onHold)(
-        this.state,
-        this.setState.bind(this),
-      );
+      this._clearHoldTimers = defineHold()(this.props.onHold)(setTimeState);
     }
   }
 
@@ -130,7 +129,7 @@ class Touchable extends React.Component {
     const { children } = this.props;
     const { component, touch } = this.state;
 
-    const holdPercent = this._calculateHoldPercent(touch.current, touch.initial);
+    const holdPercent = touch.current.duration;
     const newProps = { ...component.current.position, holdPercent };
 
     const child = children(newProps);

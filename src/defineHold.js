@@ -1,6 +1,3 @@
-import isFunction from 'lodash/isFunction';
-import merge from 'lodash/merge';
-
 const DEFAULT_INTERVAL = 250;
 const DEFAULT_HOLD_LENGTH = 1000;
 
@@ -9,16 +6,13 @@ const defineHold = (config={}) => {
   const holdLength = config.holdFor || DEFAULT_HOLD_LENGTH;
 
   return callback => {
-    const createHoldTimers = (state, setState) => {
+    const createHoldTimers = updateState => {
+
       const holdDownTimer = window.setInterval(() => {
-        setState(merge({}, state, { 
-          touch: { current: { time: new Date() }}
-        }));
+        updateState(holdLength);
       }, updateInterval);
 
-      const holdReleaseTimer = window.setTimeout(() => {
-        callback();
-      }, holdLength);
+      const holdReleaseTimer = window.setTimeout(callback, holdLength);
 
       return () => {
         window.clearInterval(holdDownTimer);

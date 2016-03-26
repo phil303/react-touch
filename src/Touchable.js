@@ -64,6 +64,15 @@ class Touchable extends React.Component {
     return 0;
   }
 
+  _resetTouch() {
+    this.setState(merge({}, this.state, {
+      touch: { 
+        initial: { position: null, time: null },
+        current: { position: null, time: null },
+      },
+    }));
+  }
+
   _handleTouchEvent(e, name, child) {
     // call child's prop's callback
     const callbackName = `on${name}`;
@@ -114,6 +123,7 @@ class Touchable extends React.Component {
 
   handleTouchEnd(e) {
     this._clearHoldTimers();
+    this._resetTouch();
   }
 
   render() {

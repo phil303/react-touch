@@ -46,7 +46,7 @@ const hold = defineHold({updateEvery: 50, holdFor: 500});
 
 ### Components
 
-##### `<Holdable />`
+#### `<Holdable />`
 
 Used to create a component that understands holds. `Holdable` will give you a hook for the completion of a hold. You can pass a component or a function as its child.  Passing a function will gain you access to the hold progress.
 
@@ -64,7 +64,7 @@ When the hold has completed, this callback is fired.
 #### Callback Argument Keys
   - `holdPercent`
 
-##### `<Draggable />`
+#### `<Draggable />`
 
 Used to create a component that can be dragged. `Draggable` takes a position style as a prop and will pass updates to the child component via a callback.
 
@@ -83,7 +83,7 @@ Used to create a component that can be dragged. `Draggable` takes a position sty
 
 #### Props
 - `style: Object`
-An object that defines the initial position of the draggable component. This is a required property. You can pass any of the following styles to it and they'll be passed back out in the callback with every animation tick.
+An object that defines the initial position of the draggable component. This is a required property. You can pass any of the following styles to it and they'll be updated and passed back out in the callback with every animation tick.
   
   - `translateX`
   - `translateY`
@@ -116,3 +116,5 @@ const hold = defineHold({updateEvery: 50, holdFor: 500});
   </Draggable>
 </Holdable>
 ```
+
+Notice the callback argument keys are the combination of the two parent components. This feature means you don't have to do multiple nested callbacks to achieve the same effect.

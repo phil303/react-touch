@@ -12,7 +12,6 @@ const ZERO_DELTAS = { dx: 0, dy: 0 };
 const DEFAULT_TOUCH = { initial: null, current: null, deltas: ZERO_DELTAS };
 
 class Draggable extends React.Component {
-  static className = "Draggable";
 
   static propTypes = {
     children: T.oneOfType([T.func, T.element]).isRequired,
@@ -87,7 +86,6 @@ class Draggable extends React.Component {
   render() {
     const { children, __passThrough } = this.props;
     const passThrough = { ...__passThrough, ...this.passThroughState() };
-    console.log("passThrough", passThrough);
     const child = isFunction(children) ? children({ ...passThrough }) : children;
 
     return React.cloneElement(React.Children.only(child), {

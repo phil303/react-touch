@@ -10,7 +10,6 @@ const T = React.PropTypes;
 const DEFAULT_HOLD = { initial: null, current: null, duration: 0 };
 
 class Holdable extends React.Component {
-  static className = "Holdable";
 
   static propTypes = {
     children: T.oneOfType([T.func, T.element]).isRequired,

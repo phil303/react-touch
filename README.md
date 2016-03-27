@@ -1,5 +1,5 @@
 # React-Touchable
-React-Touchable is still a WIP. When it's finished, it will contain a set of wrapper components that handle touch events in a more declarative way. Anything I've written below does work though. This can be illustrated with an example.
+React-Touchable is still a WIP. When it's finished, it will contain a set of wrapper components that handle touch events in a more declarative way. Anything I've written below does work though. Here's a quick example of the API.
 
 ```javascript
 import { Holdable } from 'react-touchable';
@@ -31,9 +31,9 @@ Exports:
 
 Used in conjuction with `Holdable`, `defineHold` is an optional helper function that creates a configuration for your holdable component. The arguments to it are:
 
-  - `config`: optional. Object with the following keys:
-    - `updateEvery`: optional. defaults to 250. Units are in milliseconds.
-    - `holdFor`: optional. defaults to 1000. Units are in milliseconds.
+  - `config`: Optional. Object with the following keys:
+    - `updateEvery`: Optional. Defaults to 250. Units are in milliseconds.
+    - `holdFor`: Optional. Defaults to 1000. Units are in milliseconds.
 
 #### Example Usage
 ```javascript
@@ -59,17 +59,18 @@ Used to create a component that understands holds. `Holdable` will give you hook
 
 #### Props
 - `onHoldProgress?: Function`
-When the hold makes progress, this callback is fired. Update intervals can be adjusted by configuration
+When the hold makes progress, this callback is fired. Update intervals can be adjusted by the `updateEvery` key in the configuration.
 
 - `onHoldComplete?: Function`
-When the hold has completed, this callback is fired.
+When the hold has completed, this callback is fired. Length of hold can be
+adjusted by the `holdFor` key in the configuration.
 
 #### Callback Argument Keys
   - `holdProgress`
 
 #### `<Draggable />`
 
-Used to create a component that can be dragged. `Draggable` takes a position style as a prop and will pass updates to the child component via a callback.
+Used to create a component that can be dragged. `Draggable` requires a `style` prop defining its initial position and will pass updates to the child component via a callback.
 
 #### Example Usage
 ```javascript
@@ -85,8 +86,7 @@ Used to create a component that can be dragged. `Draggable` takes a position sty
 ```
 
 #### Props
-- `style: Object`
-An object that defines the initial position of the draggable component. This is a required property. You can pass any of the following styles to it and they'll be updated and passed back out in the callback with every animation tick.
+- `style: Object` Required. An object that defines the initial position of the draggable component. You can pass any of the following styles to it and they'll be updated and passed back out in the callback with every animation tick.
   
   - `translateX`
   - `translateY`

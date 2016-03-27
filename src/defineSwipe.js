@@ -1,26 +1,32 @@
-const DEFAULT_SWIPE_DISTANCE = 50;
+const DEFAULT_SWIPE_DISTANCE = 100;
 const DEFAULT_SWIPE_VELOCITY = 10;
 
-const IS_SWIPE = {
-  'Left':  dx => -dx > swipeDistance,
-  'Right': dx =>  dx > swipeDistance,
-  'Up':    dy => -dy > swipeDistance,
-  'Down':  dy =>  dy > swipeDistance,
-};
 
 const defineSwipe = (config={}) => {
   const swipeDistance = config.swipeDistance || DEFAULT_SWIPE_DISTANCE;
   const swipeVelocity = config.swipeVelocity || DEFAULT_SWIPE_VELOCITY;
 
-  return callback => {
-    const checkForSwipe = swipeDirection => {
-      const thresholds = { swipeDistance, swipeVelocity };
-      if (IS_SWIPE[name]) {
+  return {
+    onSwipeLeft: (current, initial, callback) => {
+      if (-(current.x - initial.x) > swipeDistance) {
         callback();
       }
-    };
-    checkForSwipe.wrapped = true;
-    return checkForSwipe;
+    },
+    onSwipeRight: (current, initial, callback) => {
+      if ((current.x - initial.x) > swipeDistance) {
+        callback();
+      }
+    },
+    onSwipeUp: (current, initial, callback) => {
+      if ((current.y - initial.y) > swipeDistance) {
+        callback();
+      }
+    },
+    onSwipeDown: (current, initial, callback) => {
+      if (-(current.y - initial.y) > swipeDistance) {
+        callback();
+      }
+    },
   };
 };
 

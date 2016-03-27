@@ -2,54 +2,63 @@ import React from 'react';
 import raf from 'raf';
 import isFunction from 'lodash/isFunction';
 import merge from 'lodash/merge';
+import reduce from 'lodash/upperFirst';
+import upperFirst from 'lodash/upperFirst';
+import forEach from 'lodash/forEach';
 
-import computePosition from './computePosition';
+import defineSwipe from './defineSwipe';
 import computeDeltas from './computeDeltas';
 
 
 const T = React.PropTypes;
+const DIRECTIONS = ['Left', 'Right', 'Up', 'Down'];
 const ZERO_DELTAS = { dx: 0, dy: 0 };
-const DEFAULT_TOUCH = { initial: null, current: null, deltas: ZERO_DELTAS };
+const DEFAULT_STATE = { initial: null, current: null, deltas: ZERO_DELTAS };
 
-class Draggable extends React.Component {
+class Swipeable extends React.Component {
 
   static propTypes = {
     children: T.oneOfType([T.func, T.element]).isRequired,
-    style: T.objectOf(T.oneOfType([T.number, T.object])).isRequired,
+    config: T.object,
   };
 
-  state = {
-    component: {
-      initial: { ...computePosition(this.props.style, ZERO_DELTAS), ...ZERO_DELTAS },
-      current: { ...computePosition(this.props.style, ZERO_DELTAS), ...ZERO_DELTAS },
-    },
-    touch: DEFAULT_TOUCH,
-  };
+  static get defaultProps() {
+    return { config: defineSwipe() };
+  }
+
+  state = DEFAULT_STATE;
 
   _updatingPosition = false;
   _handleTouchMove = e => this.handleTouchMove(e);
   _handleTouchEnd = e => this.handleTouchEnd(e);
+  _handlerFired = {};
 
   _updatePosition(touchPosition) {
     this._updatingPosition = false;
+    const deltas = computeDeltas(this.state.current, touchPosition);
+    const current = { ...touchPosition, deltas };
 
-    const { touch, component } = this.state;
-    const deltas = computeDeltas(touch.current, touchPosition);
-    const componentPosition = computePosition(component.current, deltas);
+    DIRECTIONS.forEach(direction => {
+      const name = `onSwipe${direction}`;
+      const handler = this.props[name];
+      if (handler && !this._handlerFired[name]) {
+        this.props.config[name](current, this.state.initial, () => {
+          this._handlerFired[name] = true
+          handler();
+        });
+      }
+    });
 
-    this.setState(merge({}, this.state, {
-      touch: { current: touchPosition, deltas },
-      component: { current: componentPosition },
-    }));
+    this.setState(merge({}, this.state, { current }));
   }
 
-  _resetTouch() {
-    this.setState(merge({}, this.state, { touch: DEFAULT_TOUCH }));
+  _resetState() {
+    this._handlerFired = {};
+    this.setState(merge({}, this.state, DEFAULT_STATE));
   }
 
   passThroughState() {
-    const { component, touch } = this.state;
-    return { ...component.current, ...touch.deltas };
+    return { ...this.state.deltas };
   }
 
   handleTouchStart(e, child) {
@@ -65,9 +74,7 @@ class Draggable extends React.Component {
     const dimensions = { x: clientX, y: clientY };
 
     // set initial conditions for the touch event
-    this.setState(merge({}, this.state, {
-      touch: { initial: dimensions, current: dimensions }
-    }));
+    this.setState(merge({}, this.state, {initial: dimensions, current: dimensions}));
   }
 
   handleTouchMove(e) {
@@ -82,7 +89,7 @@ class Draggable extends React.Component {
   handleTouchEnd(e) {
     document.removeEventListener('touchmove', this._handleTouchMove);
     document.removeEventListener('touchend', this._handleTouchEnd);
-    this._resetTouch();
+    this._resetState();
   }
 
   render() {
@@ -97,4 +104,4 @@ class Draggable extends React.Component {
   }
 }
 
-export default Draggable;
+export default Swipeable;

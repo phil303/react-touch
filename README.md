@@ -23,11 +23,13 @@ Exports:
   
   - `Draggable`
   - `Holdable`
+  - `Swipeable`
   - `defineHold`
+  - `defineSwipe`
 
 ### Helpers
 
-##### `defineHold(config?: Object)`
+#### `defineHold(config?: Object)`
 
 Used in conjuction with `Holdable`, `defineHold` is an optional helper function that creates a configuration for your holdable component. The arguments to it are:
 
@@ -41,6 +43,21 @@ const hold = defineHold({updateEvery: 50, holdFor: 500});
 <Holdable config={hold} onHoldComplete={handleHold}>
   <Button />
 </Holdable>
+```
+
+#### `defineSwipe(config?: Object)`
+
+Used in conjuction with `Swipeable`, `defineSwipe` is an optional helper function that creates a configuration for your swipeable component. The arguments to it are:
+
+  - `config`: Optional. Object with the following keys:
+    - `swipeDistance`: Optional. Defaults to 100. Units are in pixels.
+
+#### Example Usage
+```javascript
+const swipe = defineSwipe({swipeDistance: 50});
+<Swipeable config={swipe} onSwipeLeft={deleteEmail}>
+  <Email />
+</Swipeable>
 ```
 
 
@@ -100,6 +117,31 @@ Any of the above keys depending on what you set as your `style`. Additionally:
 
   - `dx`
   - `dy`
+
+#### `<Swipeable />`
+
+Used to create a component that understands swipes. `Swipeable` gives you hooks to the swipe directions up, down, left, right, with the swipe threshold being customized using the `defineSwipe` helper.
+
+#### Example Usage:
+```javascript
+<Swipeable onSwipeLeft={deleteEmail}>
+  <Email />
+</Swipeable>
+```
+
+#### Props
+- `onSwipeLeft?: Function`
+When the swipe threshold has been passed in the left direction, fire this callback.
+
+- `onSwipeRight?: Function`
+When the swipe threshold has been passed in the right direction, fire this callback.
+
+- `onSwipeDown?: Function`
+When the swipe threshold has been passed in the down direction, fire this callback.
+
+- `onSwipeUp?: Function`
+When the swipe threshold has been passed in the up direction, fire this callback.
+
 
 
 ### Advanced Usage

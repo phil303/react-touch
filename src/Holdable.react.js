@@ -48,7 +48,7 @@ class Holdable extends React.Component {
   }
 
   passThroughState() {
-    return { duration: this.state.duration }
+    return { holdPercent: this.state.duration }
   }
 
   handleTouchStart(e, child) {

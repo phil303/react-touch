@@ -13,14 +13,16 @@ class Holdable extends React.Component {
 
   static propTypes = {
     children: T.oneOfType([T.func, T.element]).isRequired,
-    onHold: T.func,
-    hold: T.func,
+    onHoldProgress: T.func,
+    onHoldComplete: T.func,
+    config: T.object,
   };
 
   static get defaultProps() {
     return {
-      onHold: () => {},
-      hold: null,
+      onHoldProgress: () => {},
+      onHoldComplete: () => {},
+      config: defineHold(),
     };
   }
 
@@ -28,27 +30,24 @@ class Holdable extends React.Component {
 
   _handleTouchMove = e => this.handleTouchMove(e);
   _handleTouchEnd = e => this.handleTouchEnd(e);
-  _handleHold = null;
+  _startHoldProgress = null;
+  _startHoldComplete = null;
+  _clearHoldProgressTimer = null;
+  _clearHoldCompleteTimer = null;
   
   _resetTouch() {
     this.setState(DEFAULT_HOLD);
   }
 
   componentDidMount() {
-    // Some trickery here. We want to allow both config-wrapped callbacks and 
-    // normal callbacks. When we wrap a callback we add a `wrapped` property 
-    // and check for that here. If it doesn't exist, wrap it (with the
-    // defaults)
-    const { onHold, hold } = this.props;
-    if (hold && !onHold.wrapped) {
-      this._handleHold = hold(onHold);
-    } else {
-      this._handleHold = onHold.wrapped ? onHold : defineHold()(onHold);
-    }
+    const { onHoldProgress, onHoldComplete, config } = this.props;
+
+    this._startHoldProgress = config.holdProgress(onHoldProgress);
+    this._startHoldComplete = config.holdComplete(onHoldComplete);
   }
 
   passThroughState() {
-    return { holdPercent: this.state.duration }
+    return { holdProgress: this.state.duration }
   }
 
   handleTouchStart(e, child) {
@@ -64,22 +63,25 @@ class Holdable extends React.Component {
     const time = new Date();
     this.setState(merge({}, this.state, { initial: time, current: time }));
 
-    this._clearHoldTimers = this._handleHold(holdLength => {
+    this._clearHoldProgressTimer = this._startHoldProgress(holdLength => {
       const time = new Date();
       const duration = (time - this.state.initial) / holdLength;
       this.setState(merge({}, this.state, { time, duration: clamp(duration, 0, 1) }));
     });
+    this._clearHoldCompleteTimer = this._startHoldComplete();
   }
   
   handleTouchMove(e) {
     e.preventDefault();
-    this._clearHoldTimers();
+    this._clearHoldProgressTimer();
+    this._clearHoldCompleteTimer();
   }
   
   handleTouchEnd(e) {
     document.removeEventListener('touchmove', this._handleTouchMove);
     document.removeEventListener('touchend', this._handleTouchEnd);
-    this._clearHoldTimers();
+    this._clearHoldProgressTimer();
+    this._clearHoldCompleteTimer();
     this._resetTouch();
   }
 

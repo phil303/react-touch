@@ -3,8 +3,8 @@ React-Touchable is still a WIP. When it's finished, it will contain a set of wra
 
 ```javascript
 import { Holdable } from 'react-touchable';
-<Holdable onHold={handleHold}>
-  ({ holdPercent }) => <Button opacity={holdPercent} />
+<Holdable onHoldComplete={handleHold}>
+  ({ holdProgress }) => <Button opacity={holdProgress} />
 </Holdable>
 ```
 
@@ -38,7 +38,7 @@ Used in conjuction with `Holdable`, `defineHold` is an optional helper function 
 #### Example Usage
 ```javascript
 const hold = defineHold({updateEvery: 50, holdFor: 500});
-<Holdable onHold={hold(handleHold)}>
+<Holdable config={hold} onHoldComplete={handleHold}>
   <Button />
 </Holdable>
 ```
@@ -48,21 +48,24 @@ const hold = defineHold({updateEvery: 50, holdFor: 500});
 
 #### `<Holdable />`
 
-Used to create a component that understands holds. `Holdable` will give you a hook for the completion of a hold. You can pass a component or a function as its child.  Passing a function will gain you access to the hold progress.
+Used to create a component that understands holds. `Holdable` will give you hooks for the progress and the completion of a hold. You can pass a component or a function as its child. Passing a function will gain you access to the hold progress.
 
 #### Example Usage:
 ```javascript
-<Holdable onHold={handleHold}>
-  ({ holdPercent }) => <Button opacity={holdPercent} />
+<Holdable onHoldComplete={handleHold}>
+  ({ holdProgress }) => <Button opacity={holdProgress} />
 </Holdable>
 ```
 
 #### Props
-- `onHold?: Function`
+- `onHoldProgress?: Function`
+When the hold makes progress, this callback is fired. Update intervals can be adjusted by configuration
+
+- `onHoldComplete?: Function`
 When the hold has completed, this callback is fired.
 
 #### Callback Argument Keys
-  - `holdPercent`
+  - `holdProgress`
 
 #### `<Draggable />`
 
@@ -104,12 +107,12 @@ Want to be able to drag *and* hold a component? You can wrap react-touchable com
 
 ```javascript
 const hold = defineHold({updateEvery: 50, holdFor: 500});
-<Holdable onHold={hold(() => console.log('held out'))}>
+<Holdable config={hold} onHoldComplete={() => console.log('held out')}>
   <Draggable style={{translateX: 150, translateY: 200}}>
-    {({translateX, translateY, holdPercent}) => {
+    {({translateX, translateY, holdProgress}) => {
       return (
         <div style={{transform: `translate3d(${translateX}px, ${translateY}px, 0)`}}>
-          <Bubble opacity={holdPercent} />
+          <Bubble opacity={holdProgress} />
         </div>
       );
     }}

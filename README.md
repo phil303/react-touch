@@ -1,5 +1,7 @@
 # React-Touchable
-React-Touchable is still a WIP. When it's finished, it will contain a set of wrapper components that handle touch events in a more declarative way. Anything I've written below does work though. Here's a quick example of the API.
+React-Touchable is a set of wrapper components that handle touch events in a more declarative way. This library is still a WIP but anything I've documented below works. There are no tests yet and the API is probably going to shift a lot in the comings days so use at your own risk. 
+
+Here's a quick example of the API.
 
 ```javascript
 import { Holdable } from 'react-touchable';

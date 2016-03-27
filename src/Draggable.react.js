@@ -37,8 +37,8 @@ class Draggable extends React.Component {
     const componentPosition = computePosition(component.current, deltas);
 
     this.setState(merge({}, this.state, {
-      touch: { current: { ...touchPosition, ...deltas } },
-      component: {current: { ...componentPosition, ...deltas } },
+      touch: { current: touchPosition, deltas },
+      component: { current: componentPosition },
     }));
   }
 
@@ -47,7 +47,8 @@ class Draggable extends React.Component {
   }
 
   passThroughState() {
-    return { ...this.state.component.current };
+    const { component, touch } = this.state;
+    return { ...component.current, ...touch.deltas };
   }
 
   handleTouchStart(e, child) {

@@ -56,6 +56,7 @@ class Draggable extends React.Component {
     // add event handlers to the body
     document.addEventListener('touchmove', this._handleTouchMove);
     document.addEventListener('touchend', this._handleTouchEnd);
+    document.addEventListener('touchcancel', this._handleTouchEnd);
 
     // call child's and own callback from props since we're overwriting it
     child.props.onTouchStart && child.props.onTouchStart(e);
@@ -82,6 +83,7 @@ class Draggable extends React.Component {
   handleTouchEnd(e) {
     document.removeEventListener('touchmove', this._handleTouchMove);
     document.removeEventListener('touchend', this._handleTouchEnd);
+    document.removeEventListener('touchcancel', this._handleTouchEnd);
     this._resetTouch();
   }
 

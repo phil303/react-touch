@@ -3,10 +3,10 @@ React-Touchable is a set of wrapper components that handle touch events in a mor
 
 Here's a quick example of the API.
 
-```javascript
+```jsx
 import { Holdable } from 'react-touchable';
 <Holdable onHoldComplete={handleHold}>
-  ({ holdProgress }) => <Button opacity={holdProgress} />
+  ({ holdProgress }) => <Button style={{opacity: holdProgress}} />
 </Holdable>
 ```
 
@@ -40,7 +40,7 @@ Used in conjuction with `Holdable`, `defineHold` is an optional helper function 
     - `holdFor`: Optional. Defaults to 1000. Units are in milliseconds.
 
 #### Example Usage
-```javascript
+```jsx
 const hold = defineHold({updateEvery: 50, holdFor: 500});
 <Holdable config={hold} onHoldComplete={handleHold}>
   <Button />
@@ -55,7 +55,7 @@ Used in conjuction with `Swipeable`, `defineSwipe` is an optional helper functio
     - `swipeDistance`: Optional. Defaults to 100. Units are in pixels.
 
 #### Example Usage
-```javascript
+```jsx
 const swipe = defineSwipe({swipeDistance: 50});
 <Swipeable config={swipe} onSwipeLeft={deleteEmail}>
   <Email />
@@ -70,9 +70,9 @@ const swipe = defineSwipe({swipeDistance: 50});
 Used to create a component that understands holds. `Holdable` will give you hooks for the progress and the completion of a hold. You can pass a component or a function as its child. Passing a function will gain you access to the hold progress.
 
 #### Example Usage:
-```javascript
+```jsx
 <Holdable onHoldComplete={handleHold}>
-  ({ holdProgress }) => <Button opacity={holdProgress} />
+  ({ holdProgress }) => <Button style={{opacity: holdProgress}} />
 </Holdable>
 ```
 
@@ -92,7 +92,7 @@ adjusted by the `holdFor` key in the configuration.
 Used to create a component that can be dragged. `Draggable` requires a `style` prop defining its initial position and will pass updates to the child component via a callback.
 
 #### Example Usage
-```javascript
+```jsx
 <Draggable style={{translateX: 150, translateY: 200}}>
   {({translateX, translateY}) => {
     return (
@@ -125,7 +125,7 @@ Any of the above keys depending on what you set as your `style`. Additionally:
 Used to create a component that understands swipes. `Swipeable` gives you hooks to the swipe directions up, down, left, right, with the swipe threshold being customized using the `defineSwipe` helper.
 
 #### Example Usage:
-```javascript
+```jsx
 <Swipeable onSwipeLeft={deleteEmail}>
   <Email />
 </Swipeable>
@@ -149,14 +149,14 @@ When the swipe threshold has been passed in the up direction, fire this callback
 ### Advanced Usage
 Want to be able to drag *and* hold a component? You can wrap react-touchable components with other react-touchable components to achieve this. For example:
 
-```javascript
+```jsx
 const hold = defineHold({updateEvery: 50, holdFor: 500});
 <Holdable config={hold} onHoldComplete={() => console.log('held out')}>
   <Draggable style={{translateX: 150, translateY: 200}}>
     {({translateX, translateY, holdProgress}) => {
       return (
         <div style={{transform: `translate3d(${translateX}px, ${translateY}px, 0)`}}>
-          <Bubble opacity={holdProgress} />
+          <Bubble style={{opacity: holdProgress}} />
         </div>
       );
     }}

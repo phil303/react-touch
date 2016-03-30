@@ -1,10 +1,10 @@
-# React-Touchable
-React-Touchable is a set of wrapper components that handle touch events in a more declarative way. This library is still a WIP but anything I've documented below works. There are no tests yet and the API is probably going to shift a lot in the comings days so use at your own risk. 
+# React-Touch
+React-Touch is a set of wrapper components that handle touch events in a more declarative way. This library is still a WIP but anything I've documented below works. There are no tests yet and the API is probably going to shift a lot in the comings days so use at your own risk. 
 
 Here's a quick example of the API.
 
 ```jsx
-import { Holdable } from 'react-touchable';
+import { Holdable } from 'react-touch';
 <Holdable onHoldComplete={handleHold}>
   ({ holdProgress }) => <Button style={{opacity: holdProgress}} />
 </Holdable>
@@ -12,8 +12,8 @@ import { Holdable } from 'react-touchable';
 
 ## Try it out
 ```
-git clone https://github.com/phil303/react-touchable
-cd react-touchable
+git clone https://github.com/phil303/react-touch
+cd react-touch
 npm install
 ```
 
@@ -23,12 +23,12 @@ If you've ever written mobile web software, then you might've found yourself nee
 ## API
 Exports:
   
-  - [`defineHold`](https://github.com/phil303/react-touchable#definehold-)
-  - [`defineSwipe`](https://github.com/phil303/react-touchable#defineswipe-)
-  - [`Holdable`](https://github.com/phil303/react-touchable#holdable-)
-  - [`Draggable`](https://github.com/phil303/react-touchable#draggable-)
-  - [`Swipeable`](https://github.com/phil303/react-touchable#swipeable-)
-  - [`CustomGesture`](https://github.com/phil303/react-touchable#customgesture-)
+  - [`defineHold`](https://github.com/phil303/react-touch#definehold-)
+  - [`defineSwipe`](https://github.com/phil303/react-touch#defineswipe-)
+  - [`Holdable`](https://github.com/phil303/react-touch#holdable-)
+  - [`Draggable`](https://github.com/phil303/react-touch#draggable-)
+  - [`Swipeable`](https://github.com/phil303/react-touch#swipeable-)
+  - [`CustomGesture`](https://github.com/phil303/react-touch#customgesture-)
 
 ### Helpers
 
@@ -154,7 +154,7 @@ Gestures are just a combination of discrete linear movements. For instance, a "C
 
 #### Example Usage:
 ```jsx
-import { CustomGesture, moves } from 'react-touchable';
+import { CustomGesture, moves } from 'react-touch';
 
 const CIRCLE = [
   moves.RIGHT,
@@ -179,7 +179,7 @@ Callback fired when the gesture is complete.
 
 
 ### Advanced Usage
-Want to be able to drag *and* hold a component? You can wrap react-touchable components with other react-touchable components to achieve this. For example:
+Want to be able to drag *and* hold a component? You can wrap react-touch components with other react-touch components to achieve this. For example:
 
 ```jsx
 const hold = defineHold({updateEvery: 50, holdFor: 500});

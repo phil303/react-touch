@@ -1,11 +1,11 @@
 {
-  "name": "react-touchable",
+  "name": "react-touch",
   "version": "0.0.1",
   "description": "A parent component to make touch events easier",
   "main": "./lib/index.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/phil303/react-touchable"
+    "url": "https://github.com/phil303/react-touch"
   },
   "scripts": {
     "build": "babel src --out-dir lib",
@@ -18,16 +18,15 @@
   "keywords": [
     "react",
     "reactjs",
-    "react-touchable",
-    "touchable",
+    "react-touch",
     "touch"
   ],
   "author": "Phil Aquilina <philaquilina@gmail.com> (http://github.com/phil303)",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/phil303/react-touchable/issues"
+    "url": "https://github.com/phil303/react-touch/issues"
   },
-  "homepage": "https://github.com/phil303/react-touchable",
+  "homepage": "https://github.com/phil303/react-touch",
   "devDependencies": {
     "babel-cli": "6.6.4",
     "lodash": "4.6.1",
@@ -44,7 +43,7 @@
     "react": "0.14.7",
     "react-dom": "0.14.7"
   },
-  "npmName": "react-touchable",
+  "npmName": "react-touch",
   "npmFileMap": [
     {
       "basePath": "/dist/",

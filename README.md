@@ -20,7 +20,7 @@ npm install
 ## What Does This Library Do?
 If you've ever written mobile web software, then you might've found yourself needing the ability to touch drag a component, measure a hold, or handle a swipe. This library aims to make all that simpler by abstracting away the details so you can wrap your component and move on.
 
-## Current API
+## API
 Exports:
   
   - `Draggable`
@@ -144,6 +144,37 @@ When the swipe threshold has been passed in the down direction, fire this callba
 - `onSwipeUp?: Function`
 When the swipe threshold has been passed in the up direction, fire this callback.
 
+
+#### `<CustomGesture />`
+
+Used to create a component that understands a customized gesture. Gestures are passed through the config prop. When the gesture is recognized, `onGesture` will fire.
+
+Gestures are just a combination of discrete linear movements. For instance, a "C" gesture would be composed of a left, down-left, down, down-right, and right. The user doesn't have to do this perfectly, the library will do a distance calculation and fire or not fire the `onGesture` callback based off that. This algorithm is a port of a [Swift library by Didier Brun](https://github.com/didierbrun/DBPathRecognizer).
+
+#### Example Usage:
+```jsx
+import { CustomGesture, moves } from 'react-touchable';
+
+const CIRCLE = [
+  moves.RIGHT,
+  moves.DOWNRIGHT,
+  moves.DOWN,
+  moves.DOWNLEFT,
+  moves.LEFT,
+  moves.UPLEFT,
+  moves.UP,
+  moves.UPRIGHT,
+  moves.RIGHT,
+];
+
+<CustomGesture config={CIRCLE} onGesture={unlockApp}>
+  <AppLockScreen />
+</CustomGesture>
+```
+
+#### Props
+- `onGesture?: Function`
+Callback fired when the gesture is complete.
 
 
 ### Advanced Usage

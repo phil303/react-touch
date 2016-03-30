@@ -23,11 +23,12 @@ If you've ever written mobile web software, then you might've found yourself nee
 ## API
 Exports:
   
-  - `Draggable`
-  - `Holdable`
-  - `Swipeable`
-  - `defineHold`
-  - `defineSwipe`
+  - [`defineHold`](https://github.com/phil303/react-touchable#definehold-)
+  - [`defineSwipe`](https://github.com/phil303/react-touchable#defineswipe-)
+  - [`Holdable`](https://github.com/phil303/react-touchable#holdable-)
+  - [`Draggable`](https://github.com/phil303/react-touchable#draggable-)
+  - [`Swipeable`](https://github.com/phil303/react-touchable#swipeable-)
+  - [`CustomGesture`](https://github.com/phil303/react-touchable#customgesture-)
 
 ### Helpers
 

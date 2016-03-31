@@ -21,12 +21,12 @@ If you've ever written mobile web software, then you might've found yourself nee
 ## API
 Exports:
   
-  - [`defineHold`](https://github.com/phil303/react-touch#definehold-)
-  - [`defineSwipe`](https://github.com/phil303/react-touch#defineswipe-)
-  - [`Holdable`](https://github.com/phil303/react-touch#holdable-)
-  - [`Draggable`](https://github.com/phil303/react-touch#draggable-)
-  - [`Swipeable`](https://github.com/phil303/react-touch#swipeable-)
-  - [`CustomGesture`](https://github.com/phil303/react-touch#customgesture-)
+  - [`defineHold`](#defineholdconfig-object)
+  - [`defineSwipe`](#defineswipeconfig-object)
+  - [`Holdable`](#holdable-)
+  - [`Draggable`](#draggable-)
+  - [`Swipeable`](#swipeable-)
+  - [`CustomGesture`](#customgesture-)
 
 ### Helpers
 

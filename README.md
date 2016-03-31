@@ -12,9 +12,7 @@ import { Holdable } from 'react-touch';
 
 ## Try it out
 ```
-git clone https://github.com/phil303/react-touch
-cd react-touch
-npm install
+npm install react-touch --save
 ```
 
 ## What Does This Library Do?

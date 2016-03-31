@@ -12,7 +12,7 @@ const gestureLevenshtein = (a, b) => {
   const distMatrix = times(b.length + 1, () => {
     return times(a.length + 1, () => 0);
   });
-  // fill the distance matrix in 
+  // fill the distance matrix in
   for (let i=1; i<=b.length; i++) {
     for (let j=1; j<=a.length; j++) {
       distMatrix[i][j] = sectorDistance(a[j-1], b[i-1]);
@@ -30,7 +30,7 @@ const gestureLevenshtein = (a, b) => {
   for (let i=1; i<=b.length; i++) {
     levMatrix[i][0] = BIG_NUM;
   }
-  
+
   // now compute the cells in the levenshtein matrix
   for (let i=1; i<=b.length; i++) {
     for (let j=1; j<=a.length; j++) {

@@ -1,10 +1,9 @@
 const DEFAULT_SWIPE_DISTANCE = 100;
-const DEFAULT_SWIPE_VELOCITY = 10;
 
 
 const defineSwipe = (config={}) => {
+  // TODO: add swipe velocity back in
   const swipeDistance = config.swipeDistance || DEFAULT_SWIPE_DISTANCE;
-  const swipeVelocity = config.swipeVelocity || DEFAULT_SWIPE_VELOCITY;
 
   return {
     onSwipeLeft: (current, initial, callback) => {

@@ -15,7 +15,9 @@ class Holdable extends React.Component {
     children: T.oneOfType([T.func, T.element]).isRequired,
     onHoldProgress: T.func,
     onHoldComplete: T.func,
+    onTouchStart: T.func,
     config: T.object,
+    __passThrough: T.object,
   };
 
   static get defaultProps() {
@@ -34,7 +36,7 @@ class Holdable extends React.Component {
   _startHoldComplete = null;
   _clearHoldProgressTimer = null;
   _clearHoldCompleteTimer = null;
-  
+
   _resetTouch() {
     this.setState(DEFAULT_HOLD);
   }
@@ -47,7 +49,7 @@ class Holdable extends React.Component {
   }
 
   passThroughState() {
-    return { holdProgress: this.state.duration }
+    return { holdProgress: this.state.duration };
   }
 
   handleTouchStart(e, child) {
@@ -59,26 +61,27 @@ class Holdable extends React.Component {
     // call child's and own callback from props since we're overwriting it
     child.props.onTouchStart && child.props.onTouchStart(e);
     this.props.onTouchStart && this.props.onTouchStart(e);
-    
+
     // set initial conditions for the touch event
-    const time = new Date();
-    this.setState(merge({}, this.state, { initial: time, current: time }));
+    const initial = new Date();
+    this.setState(merge({}, this.state, { initial, current: initial }));
 
     this._clearHoldProgressTimer = this._startHoldProgress(holdLength => {
-      const time = new Date();
-      const duration = (time - this.state.initial) / holdLength;
-      this.setState(merge({}, this.state, { time, duration: clamp(duration, 0, 1) }));
+      const current = new Date();
+      const _duration = (current - this.state.initial) / holdLength;
+      const duration = clamp(_duration, 0, 1);
+      this.setState(merge({}, this.state, { current, duration }));
     });
     this._clearHoldCompleteTimer = this._startHoldComplete();
   }
-  
+
   handleTouchMove(e) {
     e.preventDefault();
     this._clearHoldProgressTimer();
     this._clearHoldCompleteTimer();
   }
-  
-  handleTouchEnd(e) {
+
+  handleTouchEnd() {
     document.removeEventListener('touchmove', this._handleTouchMove);
     document.removeEventListener('touchend', this._handleTouchEnd);
     document.removeEventListener('touchcancel', this._handleTouchEnd);

@@ -17,6 +17,8 @@ class Draggable extends React.Component {
   static propTypes = {
     children: T.oneOfType([T.func, T.element]).isRequired,
     style: T.objectOf(T.oneOfType([T.number, T.object])).isRequired,
+    onTouchStart: T.func,
+    __passThrough: T.object,
   };
 
   state = {
@@ -62,13 +64,13 @@ class Draggable extends React.Component {
     // call child's and own callback from props since we're overwriting it
     child.props.onTouchStart && child.props.onTouchStart(e);
     this.props.onTouchStart && this.props.onTouchStart(e);
-    
+
     const { clientX, clientY } = e.nativeEvent.touches[0];
     const dimensions = { x: clientX, y: clientY };
 
     // set initial conditions for the touch event
     this.setState(merge({}, this.state, {
-      touch: { initial: dimensions, current: dimensions }
+      touch: { initial: dimensions, current: dimensions },
     }));
   }
 
@@ -80,8 +82,8 @@ class Draggable extends React.Component {
     }
     this._updatingPosition = true;
   }
-  
-  handleTouchEnd(e) {
+
+  handleTouchEnd() {
     document.removeEventListener('touchmove', this._handleTouchMove);
     document.removeEventListener('touchend', this._handleTouchEnd);
     document.removeEventListener('touchcancel', this._handleTouchEnd);

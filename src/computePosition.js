@@ -11,6 +11,7 @@ const computePositionStyle = (currentStyle, deltas) => {
   return DIRECTIVES.reduce((style, directive) => {
     const [name, deltaType, operation] = directive;
     if (currentStyle[name]) {
+      // eslint-disable-next-line no-param-reassign
       style[name] = operation(currentStyle[name], deltas[deltaType]);
     }
     return style;

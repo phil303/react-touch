@@ -1,7 +1,6 @@
 import React from 'react';
 import raf from 'raf';
 import isFunction from 'lodash/isFunction';
-import isObject from 'lodash/isObject';
 import isArray from 'lodash/isArray';
 import merge from 'lodash/merge';
 
@@ -19,7 +18,9 @@ class CustomGesture extends React.Component {
   static propTypes = {
     children: T.oneOfType([T.func, T.element]).isRequired,
     config: T.oneOfType([T.string, T.array, T.object]).isRequired,
+    onTouchStart: T.func,
     onGesture: T.func,
+    __passThrough: T.object,
   };
 
   static get defaultProps() {
@@ -42,10 +43,10 @@ class CustomGesture extends React.Component {
     const { dx, dy } = computeDeltas(current, touchPosition);
     const sectorIdx = computeSectorIdx(dx, dy);
 
-    this._state = { 
+    this._state = {
       current: { x: current.x + dx, y: current.y + dy },
       moves: [ ...moves, this._sectors[sectorIdx] ],
-    }
+    };
   }
 
   componentDidMount() {
@@ -62,7 +63,7 @@ class CustomGesture extends React.Component {
     // call child's and own callback from props since we're overwriting it
     child.props.onTouchStart && child.props.onTouchStart(e);
     this.props.onTouchStart && this.props.onTouchStart(e);
-    
+
     const { clientX: x, clientY: y } = e.nativeEvent.touches[0];
 
     // set initial conditions for the touch event
@@ -77,8 +78,8 @@ class CustomGesture extends React.Component {
     }
     this._updatingPosition = true;
   }
-  
-  handleTouchEnd(e) {
+
+  handleTouchEnd() {
     document.removeEventListener('touchmove', this._handleTouchMove);
     document.removeEventListener('touchend', this._handleTouchEnd);
     document.removeEventListener('touchcancel', this._handleTouchEnd);
@@ -103,11 +104,11 @@ class CustomGesture extends React.Component {
 
   render() {
     const { children, __passThrough } = this.props;
-    const child = isFunction(children) ? children({ ...passThrough }) : children;
+    const child = isFunction(children) ? children(__passThrough) : children;
 
     return React.cloneElement(React.Children.only(child), {
+      __passThrough,
       onTouchStart: e => this.handleTouchStart(e, child),
-      __passThrough: __passThrough,
     });
   }
 }

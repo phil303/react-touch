@@ -7,7 +7,7 @@ const SECTOR_RADS = CIRCLE_RADS / DIRECTIONS;
 const STEP = CIRCLE_RADS / RESOLUTION;
 
 export const sectorDistance = (a, b) => {
-  const dist = Math.abs(parseInt(a) - parseInt(b));
+  const dist = Math.abs(parseInt(a, 10) - parseInt(b, 10));
   return dist > DIRECTIONS / 2 ? DIRECTIONS - dist : dist;
 };
 
@@ -18,12 +18,12 @@ export const createSectors = () => {
 };
 
 export const computeSectorIdx = (dx, dy) => {
-  // Our sectors range from vertical to diagonal to horizontal. We want them 
+  // Our sectors range from vertical to diagonal to horizontal. We want them
   // to range "around" those things. Using the "up" sector as an example,
   // relative to the vertical line representing the up direction we want the
-  // sector to range between -1/16th to +1/16th of the circle around that 
+  // sector to range between -1/16th to +1/16th of the circle around that
   // line. We can simplify the math by just adding 1/16th to our given angle.
-  let angle = Math.atan2(dy, dx) + SECTOR_RADS/2;
+  let angle = Math.atan2(dy, dx) + SECTOR_RADS / 2;
   if (angle < 0) {
     angle += CIRCLE_RADS;
   }

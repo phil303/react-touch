@@ -11,7 +11,7 @@
     "build": "babel src --out-dir lib",
     "watch": "babel src --out-dir lib --watch",
     "lint": "eslint src",
-    "prepublish": "npm run test && npm run build",
+    "prepublish": "npm run lint && npm run test && npm run build",
     "test": "./node_modules/.bin/mocha --compilers js:babel-register --recursive 'src/**/__tests__/*' --require src/__tests__/setup.js",
     "test:watch": "npm test -- --watch"
   },

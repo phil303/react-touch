@@ -1,6 +1,6 @@
 {
   "name": "react-touch",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A parent component to make touch events easier",
   "main": "./lib/index.js",
   "repository": {

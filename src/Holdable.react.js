@@ -41,6 +41,11 @@ class Holdable extends React.Component {
     this.setState(DEFAULT_HOLD);
   }
 
+  _clearTimers() {
+    this._clearHoldProgressTimer();
+    this._clearHoldCompleteTimer();
+  }
+
   componentDidMount() {
     const { onHoldProgress, onHoldComplete, config } = this.props;
 
@@ -71,22 +76,25 @@ class Holdable extends React.Component {
       const _duration = (current - this.state.initial) / holdLength;
       const duration = clamp(_duration, 0, 1);
       this.setState(merge({}, this.state, { current, duration }));
+
+      if (duration === 1) {
+        // edge case: setTimeout ensures onholdComplete has a chance to fire
+        setTimeout(() => this._clearTimers());
+      }
     });
     this._clearHoldCompleteTimer = this._startHoldComplete();
   }
 
   handleTouchMove(e) {
     e.preventDefault();
-    this._clearHoldProgressTimer();
-    this._clearHoldCompleteTimer();
+    this._clearTimers();
   }
 
   handleTouchEnd() {
     document.removeEventListener('touchmove', this._handleTouchMove);
     document.removeEventListener('touchend', this._handleTouchEnd);
     document.removeEventListener('touchcancel', this._handleTouchEnd);
-    this._clearHoldProgressTimer();
-    this._clearHoldCompleteTimer();
+    this._clearTimers();
     this._resetTouch();
   }
 

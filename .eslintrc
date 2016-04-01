@@ -14,7 +14,8 @@
     "array-bracket-spacing": 0,
     "object-curly-spacing": 0,
     "comma-dangle": ["error", "always-multiline"],
-    "react/sort-comp": 0,       // I need to fiddle with this a bit
+    "react/sort-comp": 0,   // I need to fiddle with this a bit
+    "react/prop-types": 0   // little buggy right now (https://github.com/yannickcr/eslint-plugin-react/issues/494)
   },
   "plugins": [
     "react"

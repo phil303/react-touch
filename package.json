@@ -11,8 +11,9 @@
     "build": "babel src --out-dir lib",
     "watch": "babel src --out-dir lib --watch",
     "lint": "eslint src",
-    "prepublish": "npm run lint && npm run test && npm run build",
+    "prepublish": "npm test && npm run build",
     "test": "./node_modules/.bin/mocha --compilers js:babel-register 'src/**/tests/*'",
+    "test:one": "./node_modules/.bin/mocha --compilers js:babel-register 'src/**/tests/*' -g",
     "test:watch": "npm test -- --watch",
     "test:cov": "./node_modules/.bin/babel-node ./node_modules/.bin/istanbul cover ./node_modules/mocha/bin/_mocha -- 'src/**/tests/*'"
   },
@@ -50,6 +51,8 @@
     "jsdom": "8.1.0",
     "mocha": "2.4.5",
     "react": "^0.14",
-    "react-dom": "^0.14"
+    "react-dom": "^0.14",
+    "react-addons-test-utils": "^0.14",
+    "sinon": "1.17.3"
   }
 }

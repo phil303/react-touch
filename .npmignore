@@ -1,0 +1,5 @@
+coverage
+.babelrc
+.eslint*
+.npmignore
+.travis.yml

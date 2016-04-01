@@ -3,7 +3,7 @@ import raf from 'raf';
 import isFunction from 'lodash/isFunction';
 import merge from 'lodash/merge';
 
-import computePosition from './computePosition';
+import computePositionStyle from './computePositionStyle';
 import computeDeltas from './computeDeltas';
 
 
@@ -23,8 +23,8 @@ class Draggable extends React.Component {
 
   state = {
     component: {
-      initial: { ...computePosition(this.props.style, ZERO_DELTAS), ...ZERO_DELTAS },
-      current: { ...computePosition(this.props.style, ZERO_DELTAS), ...ZERO_DELTAS },
+      initial: { ...computePositionStyle(this.props.style, ZERO_DELTAS) },
+      current: { ...computePositionStyle(this.props.style, ZERO_DELTAS) },
     },
     touch: DEFAULT_TOUCH,
   };
@@ -38,7 +38,7 @@ class Draggable extends React.Component {
 
     const { touch, component } = this.state;
     const deltas = computeDeltas(touch.current, touchPosition);
-    const componentPosition = computePosition(component.current, deltas);
+    const componentPosition = computePositionStyle(component.current, deltas);
 
     this.setState(merge({}, this.state, {
       touch: { current: touchPosition, deltas },

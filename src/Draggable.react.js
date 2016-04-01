@@ -30,6 +30,7 @@ class Draggable extends React.Component {
   };
 
   _updatingPosition = false;
+  _currentAnimationFrame = null;
   _handleTouchMove = e => this.handleTouchMove(e);
   _handleTouchEnd = e => this.handleTouchEnd(e);
 
@@ -47,6 +48,8 @@ class Draggable extends React.Component {
   }
 
   _resetTouch() {
+    raf.cancel(this._currentAnimationFrame);
+    this._currentAnimationFrame = null;
     this.setState(merge({}, this.state, { touch: DEFAULT_TOUCH }));
   }
 
@@ -78,7 +81,7 @@ class Draggable extends React.Component {
     e.preventDefault();
     if (!this._updatingPosition) {
       const { clientX: x, clientY: y } = e.touches[0];
-      raf(() => this._updatePosition({x, y}));
+      this._currentAnimationFrame = raf(() => this._updatePosition({x, y}));
     }
     this._updatingPosition = true;
   }

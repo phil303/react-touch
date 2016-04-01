@@ -51,14 +51,5 @@
     "mocha": "2.4.5",
     "react": "^0.14",
     "react-dom": "^0.14"
-  },
-  "npmName": "react-touch",
-  "npmFileMap": [
-    {
-      "basePath": "/dist/",
-      "files": [
-        "*.js"
-      ]
-    }
-  ]
+  }
 }

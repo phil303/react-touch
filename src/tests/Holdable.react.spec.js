@@ -4,27 +4,16 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import TestUtils from 'react-addons-test-utils';
 
+import { documentEvent, renderComponent } from './helpers';
 import Holdable from '../Holdable.react';
 import defineHold from '../defineHold';
 
 /* eslint-disable no-unused-expressions */
 
-const documentEvent = (eventName) => {
-  const evt = document.createEvent("HTMLEvents");
-  evt.initEvent(eventName, true, true);
-  document.dispatchEvent(evt);
-};
-
-const renderHoldable = (props) => {
-  return TestUtils.renderIntoDocument(
-    <Holdable {...props}>
-      <div></div>
-    </Holdable>
-  );
-};
 
 describe("Holdable", () => {
   let clock;
+  const renderHoldable = renderComponent(Holdable);
 
   beforeEach(() => {
     clock = sinon.useFakeTimers();
@@ -111,6 +100,12 @@ describe("Holdable", () => {
     expect(spy.notCalled).to.be.true;
   });
 
+  it("should reset the state when touch is ended", () => {
+    const holdable = renderHoldable();
+    TestUtils.Simulate.touchStart(ReactDOM.findDOMNode(holdable));
+    documentEvent('touchend');
+    expect(holdable.state).to.eql({initial: null, current: null, duration: 0});
+  });
 
   it("should alter its progress updates when 'updateEvery' is used", () => {
     const spy = sinon.spy();

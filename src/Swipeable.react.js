@@ -28,6 +28,7 @@ class Swipeable extends React.Component {
   state = DEFAULT_STATE;
 
   _updatingPosition = false;
+  _currentAnimationFrame = null;
   _handleTouchMove = e => this.handleTouchMove(e);
   _handleTouchEnd = e => this.handleTouchEnd(e);
   _handlerFired = {};
@@ -52,6 +53,8 @@ class Swipeable extends React.Component {
   }
 
   _resetState() {
+    raf.cancel(this._currentAnimationFrame);
+    this._currentAnimationFrame = null;
     this._handlerFired = {};
     this.setState(merge({}, this.state, DEFAULT_STATE));
   }
@@ -81,7 +84,7 @@ class Swipeable extends React.Component {
     e.preventDefault();
     if (!this._updatingPosition) {
       const { clientX: x, clientY: y } = e.touches[0];
-      raf(() => this._updatePosition({x, y}));
+      this._currentAnimationFrame = raf(() => this._updatePosition({x, y}));
     }
     this._updatingPosition = true;
   }

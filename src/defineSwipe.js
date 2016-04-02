@@ -7,22 +7,22 @@ const defineSwipe = (config={}) => {
 
   return {
     onSwipeLeft: (current, initial, callback) => {
-      if (-(current.x - initial.x) > swipeDistance) {
+      if (-(current.x - initial.x) >= swipeDistance) {
         callback();
       }
     },
     onSwipeRight: (current, initial, callback) => {
-      if ((current.x - initial.x) > swipeDistance) {
+      if ((current.x - initial.x) >= swipeDistance) {
         callback();
       }
     },
     onSwipeUp: (current, initial, callback) => {
-      if ((current.y - initial.y) > swipeDistance) {
+      if (-(current.y - initial.y) >= swipeDistance) {
         callback();
       }
     },
     onSwipeDown: (current, initial, callback) => {
-      if (-(current.y - initial.y) > swipeDistance) {
+      if ((current.y - initial.y) >= swipeDistance) {
         callback();
       }
     },

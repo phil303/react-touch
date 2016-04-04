@@ -12,6 +12,8 @@ export const renderComponent = component => {
   return props => TestUtils.renderIntoDocument(_component(props, <div></div>));
 };
 
+export const nativeTouch = (x, y) => ({touches: [{ clientX: x, clientY: y }]});
+
 export const fakeRaf = (() => {
   const FRAME_LENGTH = 1000 / 60;    // assume 60fps for now
 

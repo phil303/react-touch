@@ -6,7 +6,7 @@ import TestUtils from 'react-addons-test-utils';
 import omitBy from 'lodash/omitBy';
 import isNull from 'lodash/isNull';
 
-import { documentEvent, renderComponent, fakeRaf } from './helpers';
+import { documentEvent, renderComponent, fakeRaf, nativeTouch } from './helpers';
 import Swipeable from '../Swipeable.react';
 import defineSwipe from '../defineSwipe';
 
@@ -15,7 +15,6 @@ import defineSwipe from '../defineSwipe';
 Swipeable.__Rewire__('raf', fakeRaf);
 
 const renderSwipeable = renderComponent(Swipeable);
-const nativeTouch = (x, y) => ({touches: [{ clientX: x, clientY: y }]});
 
 const testSwipeDirection = (callback, failPos, successPos, config=null) => {
   const spy = sinon.spy();

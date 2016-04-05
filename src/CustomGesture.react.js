@@ -33,6 +33,7 @@ class CustomGesture extends React.Component {
   _state = INITIAL_STATE;
 
   _updatingPosition = false;
+  _currentAnimationFrame = null;
   _sectors = null;
   _handleTouchMove = e => this.handleTouchMove(e);
   _handleTouchEnd = e => this.handleTouchEnd(e);
@@ -50,6 +51,8 @@ class CustomGesture extends React.Component {
   }
 
   _resetState() {
+    raf.cancel(this._currentAnimationFrame);
+    this._currentAnimationFrame = null;
     this._state = INITIAL_STATE;
   }
 
@@ -78,7 +81,7 @@ class CustomGesture extends React.Component {
     e.preventDefault();
     if (!this._updatingPosition) {
       const { clientX: x, clientY: y } = e.touches[0];
-      raf(() => this._updatePosition({x, y}));
+      this._currentAnimationFrame = raf(() => this._updatePosition({x, y}));
     }
     this._updatingPosition = true;
   }

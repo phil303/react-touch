@@ -3,14 +3,14 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import TestUtils from 'react-addons-test-utils';
 
-import { documentEvent, renderComponent, fakeRaf, nativeTouch } from './helpers';
+import { documentEvent, renderComponent, createFakeRaf, nativeTouch } from './helpers';
 import Draggable from '../Draggable.react';
 
 /* eslint-disable no-unused-expressions */
 
-Draggable.__Rewire__('raf', fakeRaf);
-
 const renderDraggable = renderComponent(Draggable);
+const fakeRaf = createFakeRaf();
+Draggable.__Rewire__('raf', fakeRaf);
 
 describe("Draggable", () => {
   it("should pass the 'translate' style updates to the callback child", () => {
@@ -28,7 +28,7 @@ describe("Draggable", () => {
       {nativeEvent: nativeTouch(200, 300)}
     );
     documentEvent('touchmove', nativeTouch(220, 280));
-    fakeRaf.step(1);
+    fakeRaf.step();
     expect(update).to.eql({translateX: 170, translateY: 130});
   });
 
@@ -47,7 +47,7 @@ describe("Draggable", () => {
       {nativeEvent: nativeTouch(200, 300)}
     );
     documentEvent('touchmove', nativeTouch(220, 280));
-    fakeRaf.step(1);
+    fakeRaf.step();
     expect(update).to.eql({left: 170, top: 130, bottom: 30, right: 0});
   });
 
@@ -66,7 +66,7 @@ describe("Draggable", () => {
       {nativeEvent: nativeTouch(200, 300)}
     );
     documentEvent('touchmove', nativeTouch(220, 280));
-    fakeRaf.step(1);
+    fakeRaf.step();
     expect(update).to.eql({dx: 20, dy: -20});
   });
 

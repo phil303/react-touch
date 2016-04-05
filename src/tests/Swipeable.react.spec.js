@@ -6,15 +6,15 @@ import TestUtils from 'react-addons-test-utils';
 import omitBy from 'lodash/omitBy';
 import isNull from 'lodash/isNull';
 
-import { documentEvent, renderComponent, fakeRaf, nativeTouch } from './helpers';
+import { documentEvent, renderComponent, createFakeRaf, nativeTouch } from './helpers';
 import Swipeable from '../Swipeable.react';
 import defineSwipe from '../defineSwipe';
 
 /* eslint-disable no-unused-expressions */
 
-Swipeable.__Rewire__('raf', fakeRaf);
-
 const renderSwipeable = renderComponent(Swipeable);
+const fakeRaf = createFakeRaf();
+Swipeable.__Rewire__('raf', fakeRaf);
 
 const testSwipeDirection = (callback, failPos, successPos, config=null) => {
   const spy = sinon.spy();
@@ -25,10 +25,10 @@ const testSwipeDirection = (callback, failPos, successPos, config=null) => {
     {nativeEvent: nativeTouch(200, 300)}
   );
   documentEvent('touchmove', { touches: [failPos] });
-  fakeRaf.step(1);
+  fakeRaf.step();
   expect(spy.calledOnce).to.be.false;
   documentEvent('touchmove', { touches: [successPos] });
-  fakeRaf.step(1);
+  fakeRaf.step();
   expect(spy.calledOnce).to.be.true;
 };
 

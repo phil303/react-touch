@@ -14,7 +14,7 @@ export const renderComponent = component => {
 
 export const nativeTouch = (x, y) => ({touches: [{ clientX: x, clientY: y }]});
 
-export const fakeRaf = (() => {
+export const createFakeRaf = () => {
   const FRAME_LENGTH = 1000 / 60;    // assume 60fps for now
 
   let callbacks = [];
@@ -41,4 +41,4 @@ export const fakeRaf = (() => {
   };
 
   return raf;
-})();
+};

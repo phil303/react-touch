@@ -49,6 +49,10 @@ class CustomGesture extends React.Component {
     };
   }
 
+  _resetState() {
+    this._state = INITIAL_STATE;
+  }
+
   componentDidMount() {
     // create a resolution map of sectors
     this._sectors = createSectors();
@@ -89,6 +93,7 @@ class CustomGesture extends React.Component {
     );
 
     if (this._state.moves.length < config.minMoves) {
+      this._resetState();
       return;
     }
 
@@ -98,8 +103,7 @@ class CustomGesture extends React.Component {
     if (distance < config.fudgeFactor) {
       this.props.onGesture();
     }
-
-    this._state = INITIAL_STATE;
+    this._resetState();
   }
 
   render() {

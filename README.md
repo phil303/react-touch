@@ -1,7 +1,7 @@
 # React-Touch
 [![Build Status](https://img.shields.io/travis/phil303/react-touch/master.svg?style=flat)](https://travis-ci.org/phil303/react-touch)
 [![codecov.io](https://codecov.io/github/phil303/react-touch/coverage.svg?branch=master)](https://codecov.io/github/phil303/react-touch?branch=master)
-[![NPM Version](https://img.shields.io/npm/v/react-touch.svg?style=flat)](https://www.npmjs.com/package/redux-form) 
+[![NPM Version](https://img.shields.io/npm/v/react-touch.svg?style=flat)](https://www.npmjs.com/package/react-touch) 
 
 React-Touch is a set of wrapper components that handle touch events in a more declarative way. This library is still a WIP - test coverage is good but the API is probably going to shift in the comings days. 
 

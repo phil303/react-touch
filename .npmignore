@@ -3,3 +3,4 @@ coverage
 .eslint*
 .npmignore
 .travis.yml
+build.js*

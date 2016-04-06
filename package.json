@@ -9,11 +9,13 @@
   },
   "scripts": {
     "build": "babel src --out-dir lib",
-    "watch": "babel src --out-dir lib --watch",
+    "watch": "npm run build -- --watch",
+    "build:examples": "./node_modules/.bin/webpack --config examples/webpack.config.js",
+    "watch:examples": "npm run build:examples -- --watch",
     "lint": "eslint src",
     "prepublish": "rm -rf lib && npm test && npm run build",
     "test": "NODE_ENV=test ./node_modules/.bin/mocha --compilers js:babel-register 'src/**/tests/*'",
-    "test:one": "NODE_ENV=test ./node_modules/.bin/mocha --compilers js:babel-register 'src/**/tests/*' -g",
+    "test:one": "npm test -- -g",
     "test:watch": "npm test -- --watch",
     "test:cov": "NODE_ENV=test ./node_modules/.bin/babel-node ./node_modules/.bin/istanbul cover ./node_modules/mocha/bin/_mocha -- 'src/**/tests/*'",
     "test:codecov": "cat ./coverage/lcov.info | ./node_modules/codecov.io/bin/codecov.io.js"
@@ -40,6 +42,7 @@
   "devDependencies": {
     "babel-cli": "6.6.4",
     "babel-eslint": "6.0.0",
+    "babel-loader": "6.2.4",
     "babel-plugin-transform-class-properties": "6.6.0",
     "babel-plugin-transform-react-jsx": "6.4.0",
     "babel-plugin-rewire": "^1.0.0-rc-2",
@@ -56,6 +59,7 @@
     "react": "^0.14",
     "react-dom": "^0.14",
     "react-addons-test-utils": "^0.14",
-    "sinon": "1.17.3"
+    "sinon": "1.17.3",
+    "webpack": "1.12.14"
   }
 }

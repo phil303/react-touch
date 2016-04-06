@@ -1,0 +1,21 @@
+{
+  "name": "react-touch-dashboard-example",
+  "version": "0.0.0",
+  "description": "React-Touch smartphone dashboard example",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/phil303/react-touch"
+  },
+  "author": "Phil Aquilina <philaquilina@gmail.com> (http://github.com/phil303)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/phil303/react-touch/issues"
+  },
+  "homepage": "https://github.com/phil303/react-touch",
+  "dependencies": {
+    "react": "^0.14",
+    "lodash": "4.6.1",
+    "react-motion": "0.4.2"
+  }
+}
+

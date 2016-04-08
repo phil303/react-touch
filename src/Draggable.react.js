@@ -1,7 +1,6 @@
 import React from 'react';
 import raf from 'raf';
 import isFunction from 'lodash/isFunction';
-import merge from 'lodash/merge';
 
 import computePositionStyle from './computePositionStyle';
 import computeDeltas from './computeDeltas';
@@ -23,13 +22,7 @@ class Draggable extends React.Component {
     __passThrough: T.object,
   };
 
-  state = {
-    component: {
-      initial: { ...computePositionStyle(this.props.position, ZERO_DELTAS) },
-      current: { ...computePositionStyle(this.props.position, ZERO_DELTAS) },
-    },
-    touch: DEFAULT_TOUCH,
-  };
+  state = DEFAULT_TOUCH;
 
   _updatingPosition = false;
   _currentAnimationFrame = null;
@@ -39,27 +32,29 @@ class Draggable extends React.Component {
   _updatePosition(touchPosition) {
     this._updatingPosition = false;
 
-    const { touch, component } = this.state;
-    const deltas = computeDeltas(touch.current, touchPosition);
-    const componentPosition = computePositionStyle(component.current, deltas);
+    const { position } = this.props;
+    const { deltas, current } = this.state;
+    const touchDeltas = computeDeltas(current, touchPosition);
+    const latestDeltas = {
+      dx: deltas.dx + touchDeltas.dx,
+      dy: deltas.dy + touchDeltas.dy,
+    };
+    const componentPosition = computePositionStyle(position, touchDeltas);
 
     this.props.onDrag && this.props.onDrag(componentPosition);
-
-    this.setState(merge({}, this.state, {
-      touch: { current: touchPosition, deltas },
-      component: { current: componentPosition },
-    }));
+    this.setState({ deltas: latestDeltas, current: touchPosition });
   }
 
   _resetTouch() {
     raf.cancel(this._currentAnimationFrame);
     this._currentAnimationFrame = null;
-    this.setState(merge({}, this.state, { touch: DEFAULT_TOUCH }));
   }
 
   passThroughState() {
-    const { component, touch } = this.state;
-    return { ...component.current, ...touch.deltas };
+    const { position } = this.props;
+    const { deltas } = this.state;
+    const current = computePositionStyle(position, deltas);
+    return { ...current, ...deltas };
   }
 
   handleTouchStart(e, child) {
@@ -73,12 +68,8 @@ class Draggable extends React.Component {
     this.props.onTouchStart && this.props.onTouchStart(e);
 
     const { clientX, clientY } = e.nativeEvent.touches[0];
-    const dimensions = { x: clientX, y: clientY };
-
-    // set initial conditions for the touch event
-    this.setState(merge({}, this.state, {
-      touch: { initial: dimensions, current: dimensions },
-    }));
+    const position = { x: clientX, y: clientY };
+    this.setState({ initial: position, current: position });
   }
 
   handleTouchMove(e) {

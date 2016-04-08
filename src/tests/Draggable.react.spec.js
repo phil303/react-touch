@@ -109,20 +109,6 @@ describe("Draggable", () => {
     expect(spy.calledOnce).to.be.true;
   });
 
-  it("should reset only the touch state when touch is ended", () => {
-    const initial = {translateX: 100, translateY: 100};
-    const draggable = renderDraggable({position: initial});
-    TestUtils.Simulate.touchStart(
-      ReactDOM.findDOMNode(draggable),
-      {nativeEvent: nativeTouch(200, 300)}
-    );
-    documentEvent('touchend');
-    expect(draggable.state).to.eql({
-      component: { initial, current: initial },
-      touch: { initial: null, current: null, deltas: { dx: 0, dy: 0 } },
-    });
-  });
-
   it("should render its child as its only output", () => {
     const renderer = TestUtils.createRenderer();
     renderer.render(

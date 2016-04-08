@@ -14,10 +14,10 @@ const fakeRaf = createFakeRaf();
 Draggable.__Rewire__('raf', fakeRaf);
 
 describe("Draggable", () => {
-  it("should pass the 'translate' style updates to the callback child", () => {
+  it("should pass the 'translate' position updates to the callback child", () => {
     let update;
     const draggable = TestUtils.renderIntoDocument(
-      <Draggable style={{translateX: 150, translateY: 150}}>
+      <Draggable position={{translateX: 150, translateY: 150}}>
         {({ translateX, translateY }) => {
           update = { translateX, translateY };
           return <div></div>;
@@ -33,10 +33,10 @@ describe("Draggable", () => {
     expect(update).to.eql({translateX: 170, translateY: 130});
   });
 
-  it("should pass the absolutely positioned style updates to the callback child", () => {
+  it("should pass the absolute position updates to the callback child", () => {
     let update;
     const draggable = TestUtils.renderIntoDocument(
-      <Draggable style={{left: 150, top: 150, bottom: 10, right: 20}}>
+      <Draggable position={{left: 150, top: 150, bottom: 10, right: 20}}>
       {({ top, left, right, bottom }) => {
         update = { top, left, right, bottom };
         return <div></div>;
@@ -55,7 +55,7 @@ describe("Draggable", () => {
   it("should call the 'onDrag' callback on touchmove events", () => {
     const initial = {translateX: 100, translateY: 100};
     const spy = sinon.spy();
-    const draggable = renderDraggable({style: initial, onDrag: spy});
+    const draggable = renderDraggable({position: initial, onDrag: spy});
     TestUtils.Simulate.touchStart(
       ReactDOM.findDOMNode(draggable),
       {nativeEvent: nativeTouch(200, 300)}
@@ -65,10 +65,10 @@ describe("Draggable", () => {
     expect(spy.calledOnce).to.be.true;
   });
 
-  it("should pass the updated styles to the 'onDrag' callback", () => {
+  it("should pass the updated positions to the 'onDrag' callback", () => {
     const initial = {translateX: 100, translateY: 100};
     const spy = sinon.spy();
-    const draggable = renderDraggable({style: initial, onDrag: spy});
+    const draggable = renderDraggable({position: initial, onDrag: spy});
     TestUtils.Simulate.touchStart(
       ReactDOM.findDOMNode(draggable),
       {nativeEvent: nativeTouch(200, 300)}
@@ -81,7 +81,7 @@ describe("Draggable", () => {
   it("should pass the delta updates to the callback child", () => {
     let update;
     const draggable = TestUtils.renderIntoDocument(
-      <Draggable style={{left: 150, top: 150}}>
+      <Draggable position={{left: 150, top: 150}}>
       {({ dx, dy }) => {
         update = { dx, dy };
         return <div></div>;
@@ -100,7 +100,7 @@ describe("Draggable", () => {
   it("should call 'onDragEnd' on touchend", () => {
     const initial = {translateX: 100, translateY: 100};
     const spy = sinon.spy();
-    const draggable = renderDraggable({style: initial, onDragEnd: spy});
+    const draggable = renderDraggable({position: initial, onDragEnd: spy});
     TestUtils.Simulate.touchStart(
       ReactDOM.findDOMNode(draggable),
       {nativeEvent: nativeTouch(200, 300)}
@@ -111,7 +111,7 @@ describe("Draggable", () => {
 
   it("should reset only the touch state when touch is ended", () => {
     const initial = {translateX: 100, translateY: 100};
-    const draggable = renderDraggable({style: initial});
+    const draggable = renderDraggable({position: initial});
     TestUtils.Simulate.touchStart(
       ReactDOM.findDOMNode(draggable),
       {nativeEvent: nativeTouch(200, 300)}
@@ -126,7 +126,7 @@ describe("Draggable", () => {
   it("should render its child as its only output", () => {
     const renderer = TestUtils.createRenderer();
     renderer.render(
-      <Draggable style={{translateX: 100, translateY: 100}}>
+      <Draggable position={{translateX: 100, translateY: 100}}>
         <div></div>
       </Draggable>
     );
@@ -137,7 +137,7 @@ describe("Draggable", () => {
   it("should pass the correct props to its child", () => {
     const renderer = TestUtils.createRenderer();
     renderer.render(
-      <Draggable style={{translateX: 100, translateY: 100}}>
+      <Draggable position={{translateX: 100, translateY: 100}}>
         <div></div>
       </Draggable>
     );

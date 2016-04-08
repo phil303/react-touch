@@ -16,7 +16,7 @@ class Draggable extends React.Component {
 
   static propTypes = {
     children: T.oneOfType([T.func, T.element]).isRequired,
-    style: T.objectOf(T.oneOfType([T.number, T.object])).isRequired,
+    position: T.objectOf(T.oneOfType([T.number, T.object])).isRequired,
     onTouchStart: T.func,
     onDrag: T.func,
     onDragEnd: T.func,
@@ -25,8 +25,8 @@ class Draggable extends React.Component {
 
   state = {
     component: {
-      initial: { ...computePositionStyle(this.props.style, ZERO_DELTAS) },
-      current: { ...computePositionStyle(this.props.style, ZERO_DELTAS) },
+      initial: { ...computePositionStyle(this.props.position, ZERO_DELTAS) },
+      current: { ...computePositionStyle(this.props.position, ZERO_DELTAS) },
     },
     touch: DEFAULT_TOUCH,
   };

@@ -18,6 +18,7 @@ class Draggable extends React.Component {
     children: T.oneOfType([T.func, T.element]).isRequired,
     style: T.objectOf(T.oneOfType([T.number, T.object])).isRequired,
     onTouchStart: T.func,
+    onDrag: T.func,
     __passThrough: T.object,
   };
 
@@ -40,6 +41,8 @@ class Draggable extends React.Component {
     const { touch, component } = this.state;
     const deltas = computeDeltas(touch.current, touchPosition);
     const componentPosition = computePositionStyle(component.current, deltas);
+
+    this.props.onDrag && this.props.onDrag(componentPosition);
 
     this.setState(merge({}, this.state, {
       touch: { current: touchPosition, deltas },

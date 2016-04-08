@@ -1,4 +1,5 @@
 import { expect } from 'chai';
+import sinon from 'sinon';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import TestUtils from 'react-addons-test-utils';
@@ -51,6 +52,32 @@ describe("Draggable", () => {
     expect(update).to.eql({left: 170, top: 130, bottom: 30, right: 0});
   });
 
+  it("should call the 'onDrag' callback on touchmove events", () => {
+    const initial = {translateX: 100, translateY: 100};
+    const spy = sinon.spy();
+    const draggable = renderDraggable({style: initial, onDrag: spy});
+    TestUtils.Simulate.touchStart(
+      ReactDOM.findDOMNode(draggable),
+      {nativeEvent: nativeTouch(200, 300)}
+    );
+    documentEvent('touchmove', nativeTouch(220, 280));
+    fakeRaf.step();
+    expect(spy.calledOnce).to.be.true;
+  });
+
+  it("should pass the updated styles to the 'onDrag' callback", () => {
+    const initial = {translateX: 100, translateY: 100};
+    const spy = sinon.spy();
+    const draggable = renderDraggable({style: initial, onDrag: spy});
+    TestUtils.Simulate.touchStart(
+      ReactDOM.findDOMNode(draggable),
+      {nativeEvent: nativeTouch(200, 300)}
+    );
+    documentEvent('touchmove', nativeTouch(220, 280));
+    fakeRaf.step();
+    expect(spy.calledWith({translateX: 120, translateY: 80})).to.be.true;
+  });
+
   it("should pass the delta updates to the callback child", () => {
     let update;
     const draggable = TestUtils.renderIntoDocument(
@@ -71,7 +98,7 @@ describe("Draggable", () => {
   });
 
   it("should reset only the touch state when touch is ended", () => {
-    const initial ={translateX: 100, translateY: 100};
+    const initial = {translateX: 100, translateY: 100};
     const draggable = renderDraggable({style: initial});
     TestUtils.Simulate.touchStart(
       ReactDOM.findDOMNode(draggable),

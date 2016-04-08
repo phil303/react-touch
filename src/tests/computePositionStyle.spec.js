@@ -10,6 +10,12 @@ describe("computePositionStyle", () => {
     expect(computePositionStyle(styles, deltas)).to.have.all.keys(keys);
   });
 
+  it("should not skip 0 values", () => {
+    const styles = { left: 0 };
+    const deltas = { dx: 20 };
+    expect(computePositionStyle(styles, deltas)).to.eql({left: 20});
+  });
+
   it("should should correctly increment 'left'", () => {
     const styles = { left: 100 };
     const deltas = { dx: 20 };

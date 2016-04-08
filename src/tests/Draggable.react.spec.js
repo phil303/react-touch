@@ -97,6 +97,18 @@ describe("Draggable", () => {
     expect(update).to.eql({dx: 20, dy: -20});
   });
 
+  it("should call 'onDragEnd' on touchend", () => {
+    const initial = {translateX: 100, translateY: 100};
+    const spy = sinon.spy();
+    const draggable = renderDraggable({style: initial, onDragEnd: spy});
+    TestUtils.Simulate.touchStart(
+      ReactDOM.findDOMNode(draggable),
+      {nativeEvent: nativeTouch(200, 300)}
+    );
+    documentEvent('touchend');
+    expect(spy.calledOnce).to.be.true;
+  });
+
   it("should reset only the touch state when touch is ended", () => {
     const initial = {translateX: 100, translateY: 100};
     const draggable = renderDraggable({style: initial});

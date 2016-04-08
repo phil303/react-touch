@@ -19,6 +19,7 @@ class Draggable extends React.Component {
     style: T.objectOf(T.oneOfType([T.number, T.object])).isRequired,
     onTouchStart: T.func,
     onDrag: T.func,
+    onDragEnd: T.func,
     __passThrough: T.object,
   };
 
@@ -93,6 +94,7 @@ class Draggable extends React.Component {
     document.removeEventListener('touchmove', this._handleTouchMove);
     document.removeEventListener('touchend', this._handleTouchEnd);
     document.removeEventListener('touchcancel', this._handleTouchEnd);
+    this.props.onDragEnd && this.props.onDragEnd();
     this._resetTouch();
   }
 

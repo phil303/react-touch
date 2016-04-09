@@ -42,7 +42,7 @@ class Holdable extends React.Component {
   }
 
   _clearTimers() {
-    // successful hold complets will null these out
+    // successful hold completes will null these out
     this._clearHoldProgressTimer && this._clearHoldProgressTimer();
     this._clearHoldCompleteTimer && this._clearHoldCompleteTimer();
   }

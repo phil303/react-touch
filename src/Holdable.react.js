@@ -46,11 +46,22 @@ class Holdable extends React.Component {
     this._clearHoldCompleteTimer();
   }
 
+  _removeListeners() {
+    document.removeEventListener('touchmove', this._handleTouchMove);
+    document.removeEventListener('touchend', this._handleTouchEnd);
+    document.removeEventListener('touchcancel', this._handleTouchEnd);
+  }
+
   componentDidMount() {
     const { onHoldProgress, onHoldComplete, config } = this.props;
 
     this._startHoldProgress = config.holdProgress(onHoldProgress);
     this._startHoldComplete = config.holdComplete(onHoldComplete);
+  }
+
+  componentWillUnmount() {
+    this._removeListeners();
+    this._clearTimers();
   }
 
   passThroughState() {
@@ -91,9 +102,7 @@ class Holdable extends React.Component {
   }
 
   handleTouchEnd() {
-    document.removeEventListener('touchmove', this._handleTouchMove);
-    document.removeEventListener('touchend', this._handleTouchEnd);
-    document.removeEventListener('touchcancel', this._handleTouchEnd);
+    this._removeListeners();
     this._clearTimers();
     this._resetTouch();
   }

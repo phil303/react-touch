@@ -139,23 +139,30 @@ describe("Holdable", () => {
 
   it("should render its child as its only output", () => {
     const renderer = TestUtils.createRenderer();
-    renderer.render(
-      <Holdable>
-        <div></div>
-      </Holdable>
-    );
+    renderer.render(<Holdable><div></div></Holdable>);
     const output = renderer.getRenderOutput();
     expect(output.type).to.be.equal('div');
   });
 
   it("should pass the correct props to its child", () => {
     const renderer = TestUtils.createRenderer();
-    renderer.render(
-      <Holdable>
-        <div></div>
-      </Holdable>
-    );
+    renderer.render(<Holdable><div></div></Holdable>);
     const output = renderer.getRenderOutput();
     expect(output.props).to.have.keys(['__passThrough', 'onTouchStart']);
+  });
+
+  it("should remove timers and listeners when the component unmounts", () => {
+    const container = document.createElement('div');
+    const spy = sinon.spy();
+    const holdable = ReactDOM.render(
+      <Holdable onHoldProgress={spy}>
+        <div></div>
+      </Holdable>,
+      container
+    );
+    TestUtils.Simulate.touchStart(ReactDOM.findDOMNode(holdable));
+    ReactDOM.unmountComponentAtNode(container);
+    clock.tick(250);
+    expect(spy.notCalled).to.be.true;
   });
 });

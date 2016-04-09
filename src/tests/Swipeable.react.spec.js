@@ -68,23 +68,34 @@ describe("Swipeable", () => {
 
   it("should render its child as its only output", () => {
     const renderer = TestUtils.createRenderer();
-    renderer.render(
-      <Swipeable>
-        <div></div>
-      </Swipeable>
-    );
+    renderer.render(<Swipeable><div></div></Swipeable>);
     const output = renderer.getRenderOutput();
     expect(output.type).to.be.equal('div');
   });
 
   it("should pass the correct props to its child", () => {
     const renderer = TestUtils.createRenderer();
-    renderer.render(
-      <Swipeable>
-        <div></div>
-      </Swipeable>
-    );
+    renderer.render(<Swipeable><div></div></Swipeable>);
     const output = renderer.getRenderOutput();
     expect(output.props).to.have.keys(['__passThrough', 'onTouchStart']);
+  });
+
+  it("should remove listeners when the component unmounts", () => {
+    const container = document.createElement('div');
+    const spy = sinon.spy();
+    const swipeable = ReactDOM.render(
+      <Swipeable onSwipeLeft={spy}>
+        <div></div>
+      </Swipeable>,
+      container
+    );
+    TestUtils.Simulate.touchStart(
+      ReactDOM.findDOMNode(swipeable),
+      {nativeEvent: nativeTouch(200, 300)}
+    );
+    ReactDOM.unmountComponentAtNode(container);
+    documentEvent('touchmove', nativeTouch(100, 300));
+    fakeRaf.step();
+    expect(spy.notCalled).to.be.true;
   });
 });

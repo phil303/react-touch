@@ -37,6 +37,7 @@ class Swipeable extends React.Component {
     this._updatingPosition = false;
     const deltas = computeDeltas(this.state.current, touchPosition);
     const current = { ...touchPosition, deltas };
+    this.setState(merge({}, this.state, { current }));
 
     DIRECTIONS.forEach(direction => {
       const name = `onSwipe${direction}`;
@@ -48,8 +49,12 @@ class Swipeable extends React.Component {
         });
       }
     });
+  }
 
-    this.setState(merge({}, this.state, { current }));
+  _removeListeners() {
+    document.removeEventListener('touchmove', this._handleTouchMove);
+    document.removeEventListener('touchend', this._handleTouchEnd);
+    document.removeEventListener('touchcancel', this._handleTouchEnd);
   }
 
   _resetState() {
@@ -57,6 +62,11 @@ class Swipeable extends React.Component {
     this._currentAnimationFrame = null;
     this._handlerFired = {};
     this.setState(merge({}, this.state, DEFAULT_STATE));
+  }
+
+  componentWillUnmount() {
+    raf.cancel(this._currentAnimationFrame);
+    this._removeListeners();
   }
 
   passThroughState() {
@@ -74,10 +84,9 @@ class Swipeable extends React.Component {
     this.props.onTouchStart && this.props.onTouchStart(e);
 
     const { clientX, clientY } = e.nativeEvent.touches[0];
-    const dimensions = { x: clientX, y: clientY };
+    const position = { x: clientX, y: clientY };
 
-    // set initial conditions for the touch event
-    this.setState(merge({}, this.state, {initial: dimensions, current: dimensions}));
+    this.setState(merge({}, this.state, {initial: position, current: position}));
   }
 
   handleTouchMove(e) {
@@ -90,9 +99,8 @@ class Swipeable extends React.Component {
   }
 
   handleTouchEnd() {
-    document.removeEventListener('touchmove', this._handleTouchMove);
-    document.removeEventListener('touchend', this._handleTouchEnd);
-    document.removeEventListener('touchcancel', this._handleTouchEnd);
+    this._updatingPosition = false;
+    this._removeListeners();
     this._resetState();
   }
 

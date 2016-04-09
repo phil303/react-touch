@@ -56,9 +56,20 @@ class CustomGesture extends React.Component {
     this._state = INITIAL_STATE;
   }
 
+  _removeListeners() {
+    document.removeEventListener('touchmove', this._handleTouchMove);
+    document.removeEventListener('touchend', this._handleTouchEnd);
+    document.removeEventListener('touchcancel', this._handleTouchEnd);
+  }
+
   componentDidMount() {
     // create a resolution map of sectors
     this._sectors = createSectors();
+  }
+
+  componentWillUnmount() {
+    raf.cancel(this._currentAnimationFrame);
+    this._removeListeners();
   }
 
   handleTouchStart(e, child) {
@@ -87,9 +98,8 @@ class CustomGesture extends React.Component {
   }
 
   handleTouchEnd() {
-    document.removeEventListener('touchmove', this._handleTouchMove);
-    document.removeEventListener('touchend', this._handleTouchEnd);
-    document.removeEventListener('touchcancel', this._handleTouchEnd);
+    this._updatingPosition = false;
+    this._removeListeners();
 
     const config = convertToDefaultsObject(
       this.props.config, 'gesture', DEFAULT_CONFIG

@@ -102,4 +102,27 @@ describe("CustomGesture", () => {
     const output = renderer.getRenderOutput();
     expect(output.props).to.have.keys(['__passThrough', 'onTouchStart']);
   });
+
+  it("should remove listeners when the component unmounts", () => {
+    const container = document.createElement('div');
+    const spy = sinon.spy();
+    const component = ReactDOM.render(
+      <CustomGesture onGesture={spy} config={[moves.RIGHT]}>
+        <div></div>
+      </CustomGesture>,
+      container
+    );
+    TestUtils.Simulate.touchStart(
+      ReactDOM.findDOMNode(component),
+      {nativeEvent: nativeTouch(200, 300)}
+    );
+    times(9, i => {
+      documentEvent('touchmove', nativeTouch(200 + i * 20, 300));
+      fakeRaf.step();
+    });
+    ReactDOM.unmountComponentAtNode(container);
+    documentEvent('touchend');
+    fakeRaf.step();
+    expect(spy.notCalled).to.be.true;
+  });
 });

@@ -19,6 +19,10 @@ import { Holdable } from 'react-touch';
 npm install react-touch --save
 ```
 
+## Demos
+
+  - [Emulating a Smartphone Dashboard](http://phil303.github.io/react-touch/examples/smartphone-dashboard/)
+
 ## What Does This Library Do?
 If you've ever written mobile web software, then you might've found yourself needing the ability to touch drag a component, measure a hold, or handle a swipe. This library aims to make all that simpler by abstracting away the details so you can wrap your component and move on.
 

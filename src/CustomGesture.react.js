@@ -1,9 +1,9 @@
 import React from 'react';
-import raf from 'raf';
 import isFunction from 'lodash/isFunction';
 import isArray from 'lodash/isArray';
 import merge from 'lodash/merge';
 
+import TouchHandler from './TouchHandler';
 import computeDeltas from './computeDeltas';
 import gestureLevenshtein from './gestureLevenshtein';
 import convertToDefaultsObject from './convertToDefaultsObject';
@@ -30,18 +30,38 @@ class CustomGesture extends React.Component {
     };
   }
 
-  _state = INITIAL_STATE;
+  constructor(props) {
+    super(props);
+    this._state = INITIAL_STATE;
+    this._sectors = createSectors();    // create a resolution map of sectors
 
-  _updatingPosition = false;
-  _currentAnimationFrame = null;
-  _sectors = null;
-  _handleTouchMove = e => this.handleTouchMove(e);
-  _handleTouchEnd = e => this.handleTouchEnd(e);
+    this._touchHandler = new TouchHandler(
+      this.handleTouchStart.bind(this),
+      this.handleTouchMove.bind(this),
+      this.handleTouchEnd.bind(this),
+    );
+  }
 
-  _updatePosition(touchPosition) {
-    this._updatingPosition = false;
+  componentWillUnmount() {
+    this._touchHandler.cancelAnimationFrame();
+    this._touchHandler.removeListeners();
+  }
+
+  handleTouchStart(evt) {
+    // call child's and own callback from props since we're overwriting it
+    const { children: child } = this.props;
+    child.props.onTouchStart && child.props.onTouchStart(evt);
+    this.props.onTouchStart && this.props.onTouchStart(evt);
+
+    // set initial conditions for the touch event
+    const { clientX: x, clientY: y } = evt.nativeEvent.touches[0];
+    this._state = merge({}, this._state, {current: { x, y }});
+  }
+
+  handleTouchMove(evt) {
+    const { clientX: x, clientY: y } = evt.touches[0];
     const { current, moves } = this._state;
-    const { dx, dy } = computeDeltas(current, touchPosition);
+    const { dx, dy } = computeDeltas(current, { x, y });
     const sectorIdx = computeSectorIdx(dx, dy);
 
     this._state = {
@@ -50,60 +70,9 @@ class CustomGesture extends React.Component {
     };
   }
 
-  _resetState() {
-    raf.cancel(this._currentAnimationFrame);
-    this._currentAnimationFrame = null;
-    this._state = INITIAL_STATE;
-  }
-
-  _removeListeners() {
-    document.removeEventListener('touchmove', this._handleTouchMove);
-    document.removeEventListener('touchend', this._handleTouchEnd);
-    document.removeEventListener('touchcancel', this._handleTouchEnd);
-  }
-
-  componentDidMount() {
-    // create a resolution map of sectors
-    this._sectors = createSectors();
-  }
-
-  componentWillUnmount() {
-    raf.cancel(this._currentAnimationFrame);
-    this._removeListeners();
-  }
-
-  handleTouchStart(e, child) {
-    // add event handlers to the body
-    document.addEventListener('touchmove', this._handleTouchMove);
-    document.addEventListener('touchend', this._handleTouchEnd);
-    document.addEventListener('touchcancel', this._handleTouchEnd);
-
-    // call child's and own callback from props since we're overwriting it
-    child.props.onTouchStart && child.props.onTouchStart(e);
-    this.props.onTouchStart && this.props.onTouchStart(e);
-
-    const { clientX: x, clientY: y } = e.nativeEvent.touches[0];
-
-    // set initial conditions for the touch event
-    this._state = merge({}, this._state, {current: { x, y }});
-  }
-
-  handleTouchMove(e) {
-    e.preventDefault();
-    if (!this._updatingPosition) {
-      const { clientX: x, clientY: y } = e.touches[0];
-      this._currentAnimationFrame = raf(() => this._updatePosition({x, y}));
-    }
-    this._updatingPosition = true;
-  }
-
   handleTouchEnd() {
-    this._updatingPosition = false;
-    this._removeListeners();
-
-    const config = convertToDefaultsObject(
-      this.props.config, 'gesture', DEFAULT_CONFIG
-    );
+    const { config: _config } = this.props;
+    const config = convertToDefaultsObject(_config, 'gesture', DEFAULT_CONFIG);
 
     if (this._state.moves.length < config.minMoves) {
       this._resetState();
@@ -119,13 +88,18 @@ class CustomGesture extends React.Component {
     this._resetState();
   }
 
+  _resetState() {
+    this._touchHandler.cancelAnimationFrame();
+    this._state = INITIAL_STATE;
+  }
+
   render() {
     const { children, __passThrough } = this.props;
     const child = isFunction(children) ? children(__passThrough) : children;
 
     return React.cloneElement(React.Children.only(child), {
       __passThrough,
-      onTouchStart: e => this.handleTouchStart(e, child),
+      onTouchStart: evt => this._touchHandler.handleTouchStart(evt, child),
     });
   }
 }

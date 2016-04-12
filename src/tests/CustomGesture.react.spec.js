@@ -8,14 +8,17 @@ import times from 'lodash/times';
 import { documentEvent, renderComponent, createFakeRaf, nativeTouch } from './helpers';
 import moves from '../gestureMoves';
 import CustomGesture from '../CustomGesture.react';
+import TouchHandler from '../TouchHandler';
 
 /* eslint-disable no-unused-expressions */
 
 const renderCustomGesture = renderComponent(CustomGesture);
 const fakeRaf = createFakeRaf();
-CustomGesture.__Rewire__('raf', fakeRaf);
 
 describe("CustomGesture", () => {
+  beforeEach(() => TouchHandler.__Rewire__('raf', fakeRaf));
+  afterEach(() => TouchHandler.__ResetDependency__('raf'));
+
   it("should fire 'onGesture' with a qualifying gesture", () => {
     const alpha = [
       moves.DOWNRIGHT,

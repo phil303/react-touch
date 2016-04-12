@@ -4,6 +4,7 @@ import merge from 'lodash/merge';
 import clamp from 'lodash/clamp';
 
 import defineHold from './defineHold';
+import TouchHandler from './TouchHandler';
 
 
 const T = React.PropTypes;
@@ -28,14 +29,20 @@ class Holdable extends React.Component {
     };
   }
 
-  state = DEFAULT_HOLD;
+  constructor(props) {
+    super(props);
+    this.state = DEFAULT_HOLD;
+    this._startHoldProgress = null;
+    this._startHoldComplete = null;
+    this._clearHoldProgressTimer = null;
+    this._clearHoldCompleteTimer = null;
 
-  _handleTouchMove = e => this.handleTouchMove(e);
-  _handleTouchEnd = e => this.handleTouchEnd(e);
-  _startHoldProgress = null;
-  _startHoldComplete = null;
-  _clearHoldProgressTimer = null;
-  _clearHoldCompleteTimer = null;
+    this._touchHandler = new TouchHandler(
+      this.handleTouchStart.bind(this),
+      this.handleTouchMove.bind(this),
+      this.handleTouchEnd.bind(this),
+    );
+  }
 
   _resetTouch() {
     this.setState(DEFAULT_HOLD);
@@ -47,12 +54,6 @@ class Holdable extends React.Component {
     this._clearHoldCompleteTimer && this._clearHoldCompleteTimer();
   }
 
-  _removeListeners() {
-    document.removeEventListener('touchmove', this._handleTouchMove);
-    document.removeEventListener('touchend', this._handleTouchEnd);
-    document.removeEventListener('touchcancel', this._handleTouchEnd);
-  }
-
   componentDidMount() {
     const { onHoldProgress, onHoldComplete, config } = this.props;
 
@@ -61,7 +62,7 @@ class Holdable extends React.Component {
   }
 
   componentWillUnmount() {
-    this._removeListeners();
+    this._touchHandler.removeListeners();
     this._clearTimers();
   }
 
@@ -69,22 +70,17 @@ class Holdable extends React.Component {
     return { holdProgress: this.state.duration };
   }
 
-  handleTouchStart(e, child) {
-    // add event handlers to the body
-    document.addEventListener('touchmove', this._handleTouchMove);
-    document.addEventListener('touchend', this._handleTouchEnd);
-    document.addEventListener('touchcancel', this._handleTouchEnd);
-
+  handleTouchStart(evt, child) {
     // call child's and own callback from props since we're overwriting it
-    child.props.onTouchStart && child.props.onTouchStart(e);
-    this.props.onTouchStart && this.props.onTouchStart(e);
+    child.props.onTouchStart && child.props.onTouchStart(evt);
+    this.props.onTouchStart && this.props.onTouchStart(evt);
 
     // set initial conditions for the touch event
-    const initial = new Date();
+    const initial = Date.now();
     this.setState(merge({}, this.state, { initial, current: initial }));
 
     this._clearHoldProgressTimer = this._startHoldProgress(holdLength => {
-      const current = new Date();
+      const current = Date.now();
       const _duration = (current - this.state.initial) / holdLength;
       const duration = clamp(_duration, 0, 1);
       this.setState(merge({}, this.state, { current, duration }));
@@ -97,13 +93,11 @@ class Holdable extends React.Component {
     this._clearHoldCompleteTimer = this._startHoldComplete();
   }
 
-  handleTouchMove(e) {
-    e.preventDefault();
+  handleTouchMove() {
     this._clearTimers();
   }
 
   handleTouchEnd() {
-    this._removeListeners();
     this._clearTimers();
     this._resetTouch();
   }
@@ -114,8 +108,8 @@ class Holdable extends React.Component {
     const child = isFunction(children) ? children({ ...passThrough }) : children;
 
     return React.cloneElement(React.Children.only(child), {
-      onTouchStart: e => this.handleTouchStart(e, child),
       __passThrough: passThrough,
+      onTouchStart: evt => this._touchHandler.handleTouchStart(evt, child),
     });
   }
 }

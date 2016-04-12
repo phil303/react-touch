@@ -6,14 +6,17 @@ import TestUtils from 'react-addons-test-utils';
 
 import { documentEvent, renderComponent, createFakeRaf, nativeTouch } from './helpers';
 import Draggable from '../Draggable.react';
+import TouchHandler from '../TouchHandler';
 
 /* eslint-disable no-unused-expressions */
 
 const renderDraggable = renderComponent(Draggable);
 const fakeRaf = createFakeRaf();
-Draggable.__Rewire__('raf', fakeRaf);
 
 describe("Draggable", () => {
+  beforeEach(() => TouchHandler.__Rewire__('raf', fakeRaf));
+  afterEach(() => TouchHandler.__ResetDependency__('raf'));
+
   it("should pass the 'translate' position updates to the callback child", () => {
     let update;
     const draggable = TestUtils.renderIntoDocument(

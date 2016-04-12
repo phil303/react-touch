@@ -9,12 +9,12 @@ import isNull from 'lodash/isNull';
 import { documentEvent, renderComponent, createFakeRaf, nativeTouch } from './helpers';
 import Swipeable from '../Swipeable.react';
 import defineSwipe from '../defineSwipe';
+import TouchHandler from '../TouchHandler';
 
 /* eslint-disable no-unused-expressions */
 
 const renderSwipeable = renderComponent(Swipeable);
 const fakeRaf = createFakeRaf();
-Swipeable.__Rewire__('raf', fakeRaf);
 
 const testSwipeDirection = (callback, failPos, successPos, config=null) => {
   const spy = sinon.spy();
@@ -33,6 +33,9 @@ const testSwipeDirection = (callback, failPos, successPos, config=null) => {
 };
 
 describe("Swipeable", () => {
+  beforeEach(() => TouchHandler.__Rewire__('raf', fakeRaf));
+  afterEach(() => TouchHandler.__ResetDependency__('raf'));
+
   it("should fire 'onSwipeLeft' when swiped left", () => {
     testSwipeDirection('onSwipeLeft', { clientX: 101 }, { clientX: 100 });
   });

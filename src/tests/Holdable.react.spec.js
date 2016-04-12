@@ -10,11 +10,10 @@ import defineHold from '../defineHold';
 
 /* eslint-disable no-unused-expressions */
 
+let clock;
+const renderHoldable = renderComponent(Holdable);
 
 describe("Holdable", () => {
-  let clock;
-  const renderHoldable = renderComponent(Holdable);
-
   beforeEach(() => {
     clock = sinon.useFakeTimers();
   });

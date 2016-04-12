@@ -1,7 +1,7 @@
 import React from 'react';
-import raf from 'raf';
 import isFunction from 'lodash/isFunction';
 
+import TouchHandler from './TouchHandler';
 import computePositionStyle from './computePositionStyle';
 import computeDeltas from './computeDeltas';
 
@@ -22,32 +22,14 @@ class Draggable extends React.Component {
     __passThrough: T.object,
   };
 
-  state = DEFAULT_TOUCH;
-
-  _updatingPosition = false;
-  _currentAnimationFrame = null;
-  _handleTouchMove = e => this.handleTouchMove(e);
-  _handleTouchEnd = e => this.handleTouchEnd(e);
-
-  _updatePosition(touchPosition) {
-    this._updatingPosition = false;
-
-    const { position } = this.props;
-    const { deltas, current } = this.state;
-    const touchDeltas = computeDeltas(current, touchPosition);
-    const latestDeltas = {
-      dx: deltas.dx + touchDeltas.dx,
-      dy: deltas.dy + touchDeltas.dy,
-    };
-    const componentPosition = computePositionStyle(position, touchDeltas);
-
-    this.props.onDrag && this.props.onDrag(componentPosition);
-    this.setState({ deltas: latestDeltas, current: touchPosition });
-  }
-
-  _resetTouch() {
-    raf.cancel(this._currentAnimationFrame);
-    this._currentAnimationFrame = null;
+  constructor(props) {
+    super(props);
+    this.state = DEFAULT_TOUCH;
+    this._touchHandler = new TouchHandler(
+      this.handleTouchStart.bind(this),
+      this.handleTouchMove.bind(this),
+      this.handleTouchEnd.bind(this),
+    );
   }
 
   passThroughState() {
@@ -57,36 +39,32 @@ class Draggable extends React.Component {
     return { ...current, ...deltas };
   }
 
-  handleTouchStart(e, child) {
-    // add event handlers to the body
-    document.addEventListener('touchmove', this._handleTouchMove);
-    document.addEventListener('touchend', this._handleTouchEnd);
-    document.addEventListener('touchcancel', this._handleTouchEnd);
-
+  handleTouchStart(evt, child) {
     // call child's and own callback from props since we're overwriting it
-    child.props.onTouchStart && child.props.onTouchStart(e);
-    this.props.onTouchStart && this.props.onTouchStart(e);
+    child.props.onTouchStart && child.props.onTouchStart(evt);
+    this.props.onTouchStart && this.props.onTouchStart(evt);
 
-    const { clientX, clientY } = e.nativeEvent.touches[0];
+    const { clientX, clientY } = evt.nativeEvent.touches[0];
     const position = { x: clientX, y: clientY };
     this.setState({ initial: position, current: position });
   }
 
-  handleTouchMove(e) {
-    e.preventDefault();
-    if (!this._updatingPosition) {
-      const { clientX: x, clientY: y } = e.touches[0];
-      this._currentAnimationFrame = raf(() => this._updatePosition({x, y}));
-    }
-    this._updatingPosition = true;
+  handleTouchMove(evt) {
+    const { position } = this.props;
+    const { deltas, current } = this.state;
+    const { clientX: x, clientY: y } = evt.touches[0];
+
+    const touchPosition = { x, y };
+    const touchDeltas = computeDeltas(current, touchPosition);
+    const componentPosition = computePositionStyle(position, touchDeltas);
+    this.props.onDrag && this.props.onDrag(componentPosition);
+
+    const latest = {dx: deltas.dx + touchDeltas.dx, dy: deltas.dy + touchDeltas.dy};
+    this.setState({ deltas: latest, current: touchPosition });
   }
 
   handleTouchEnd() {
-    document.removeEventListener('touchmove', this._handleTouchMove);
-    document.removeEventListener('touchend', this._handleTouchEnd);
-    document.removeEventListener('touchcancel', this._handleTouchEnd);
     this.props.onDragEnd && this.props.onDragEnd();
-    this._resetTouch();
   }
 
   render() {
@@ -95,8 +73,8 @@ class Draggable extends React.Component {
     const child = isFunction(children) ? children({ ...passThrough }) : children;
 
     return React.cloneElement(React.Children.only(child), {
-      onTouchStart: e => this.handleTouchStart(e, child),
       __passThrough: passThrough,
+      onTouchStart: evt => this._touchHandler.handleTouchStart(evt, child),
     });
   }
 }

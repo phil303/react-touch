@@ -1,10 +1,9 @@
 import React from 'react';
-import raf from 'raf';
 import isFunction from 'lodash/isFunction';
 import merge from 'lodash/merge';
 
+import TouchHandler from './TouchHandler';
 import defineSwipe from './defineSwipe';
-import computeDeltas from './computeDeltas';
 
 
 const T = React.PropTypes;
@@ -25,25 +24,50 @@ class Swipeable extends React.Component {
     return { config: defineSwipe() };
   }
 
-  state = DEFAULT_STATE;
+  constructor(props) {
+    super(props);
 
-  _updatingPosition = false;
-  _currentAnimationFrame = null;
-  _handleTouchMove = e => this.handleTouchMove(e);
-  _handleTouchEnd = e => this.handleTouchEnd(e);
-  _handlerFired = {};
+    this.state = DEFAULT_STATE;
+    this._handlerFired = {};
+    this._touchHandler = new TouchHandler(
+      this.handleTouchStart.bind(this),
+      this.handleTouchMove.bind(this),
+      this.handleTouchEnd.bind(this),
+    );
+  }
 
-  _updatePosition(touchPosition) {
-    this._updatingPosition = false;
-    const deltas = computeDeltas(this.state.current, touchPosition);
-    const current = { ...touchPosition, deltas };
-    this.setState(merge({}, this.state, { current }));
+  componentWillUnmount() {
+    this._touchHandler.cancelAnimationFrame();
+    this._touchHandler.removeListeners();
+  }
+
+  passThroughState() {
+    return { ...this.state.deltas };
+  }
+
+  handleTouchStart(evt) {
+    // call child's and own callback from props since we're overwriting it
+    const { children: child } = this.props;
+    child.props.onTouchStart && child.props.onTouchStart(evt);
+    this.props.onTouchStart && this.props.onTouchStart(evt);
+
+    const { clientX, clientY } = evt.nativeEvent.touches[0];
+    const position = { x: clientX, y: clientY };
+
+    this.setState(merge({}, this.state, {initial: position, current: position}));
+  }
+
+  handleTouchMove(evt) {
+    const { clientX: x, clientY: y } = evt.touches[0];
+    const touchPosition = { x, y };
+
+    this.setState(merge({}, this.state, { current: touchPosition }));
 
     DIRECTIONS.forEach(direction => {
       const name = `onSwipe${direction}`;
       const handler = this.props[name];
       if (handler && !this._handlerFired[name]) {
-        this.props.config[name](current, this.state.initial, () => {
+        this.props.config[name](touchPosition, this.state.initial, () => {
           this._handlerFired[name] = true;
           handler();
         });
@@ -51,57 +75,14 @@ class Swipeable extends React.Component {
     });
   }
 
-  _removeListeners() {
-    document.removeEventListener('touchmove', this._handleTouchMove);
-    document.removeEventListener('touchend', this._handleTouchEnd);
-    document.removeEventListener('touchcancel', this._handleTouchEnd);
+  handleTouchEnd() {
+    this._resetState();
   }
 
   _resetState() {
-    raf.cancel(this._currentAnimationFrame);
-    this._currentAnimationFrame = null;
+    this._touchHandler.cancelAnimationFrame();
     this._handlerFired = {};
     this.setState(merge({}, this.state, DEFAULT_STATE));
-  }
-
-  componentWillUnmount() {
-    raf.cancel(this._currentAnimationFrame);
-    this._removeListeners();
-  }
-
-  passThroughState() {
-    return { ...this.state.deltas };
-  }
-
-  handleTouchStart(e, child) {
-    // add event handlers to the body
-    document.addEventListener('touchmove', this._handleTouchMove);
-    document.addEventListener('touchend', this._handleTouchEnd);
-    document.addEventListener('touchcancel', this._handleTouchEnd);
-
-    // call child's and own callback from props since we're overwriting it
-    child.props.onTouchStart && child.props.onTouchStart(e);
-    this.props.onTouchStart && this.props.onTouchStart(e);
-
-    const { clientX, clientY } = e.nativeEvent.touches[0];
-    const position = { x: clientX, y: clientY };
-
-    this.setState(merge({}, this.state, {initial: position, current: position}));
-  }
-
-  handleTouchMove(e) {
-    e.preventDefault();
-    if (!this._updatingPosition) {
-      const { clientX: x, clientY: y } = e.touches[0];
-      this._currentAnimationFrame = raf(() => this._updatePosition({x, y}));
-    }
-    this._updatingPosition = true;
-  }
-
-  handleTouchEnd() {
-    this._updatingPosition = false;
-    this._removeListeners();
-    this._resetState();
   }
 
   render() {
@@ -110,8 +91,8 @@ class Swipeable extends React.Component {
     const child = isFunction(children) ? children({ ...passThrough }) : children;
 
     return React.cloneElement(React.Children.only(child), {
-      onTouchStart: e => this.handleTouchStart(e, child),
       __passThrough: passThrough,
+      onTouchStart: evt => this._touchHandler.handleTouchStart(evt, child),
     });
   }
 }

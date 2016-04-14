@@ -3,7 +3,6 @@ import raf from 'raf';
 class TouchHandler {
   constructor(onTouchStart, onTouchMove, onTouchEnd) {
     this._currentAnimationFrame = null;
-    this._currentlyAnimating = false;
 
     this._onTouchStart = onTouchStart;
     this._onTouchMove = onTouchMove;
@@ -33,17 +32,16 @@ class TouchHandler {
 
   handleTouchMove(evt) {
     evt.preventDefault();
-    if (!this._currentlyAnimating) {
+    if (!this._currentAnimationFrame) {
       this._currentAnimationFrame = raf(() => {
-        this._currentlyAnimating = false;
+        this._currentAnimationFrame = null;
         this._onTouchMove(evt);
       });
     }
-    this._currentlyAnimating = true;
   }
 
   handleTouchEnd(evt) {
-    this._currentlyAnimating = false;
+    this.cancelAnimationFrame();
     this._removeListeners();
     this._onTouchEnd(evt);
   }
@@ -53,8 +51,8 @@ class TouchHandler {
   }
 
   cancelAnimationFrame() {
-    raf.cancel(this._animationFrame);
-    this._animationFrame = null;
+    raf.cancel(this._currentAnimationFrame);
+    this._currentAnimationFrame = null;
   }
 }
 

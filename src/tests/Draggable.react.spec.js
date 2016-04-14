@@ -131,6 +131,6 @@ describe("Draggable", () => {
       </Draggable>
     );
     const output = renderer.getRenderOutput();
-    expect(output.props).to.have.keys(['__passThrough', 'onTouchStart']);
+    expect(output.props).to.have.keys(['__passThrough', 'onMouseDown', 'onTouchStart']);
   });
 });

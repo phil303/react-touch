@@ -35,7 +35,12 @@ class Dashboard extends React.Component {
     const { width, height } = this.props;
     const slotSize = (width - BORDER * 2 - PADDING * 2) / ICONS_PER_ROW;
     return (
-      <div className="dashboard" style={{ width, height }}>
+      <div
+        className="dashboard"
+        style={{ width, height }}
+        onTouchStart={e => e.preventDefault()}
+        onTouchMove={e => e.preventDefault()}
+      >
         {this.props.pages.map((icons, idx) => {
           const left = (idx - this.state.currentPage) * width;
           return (
@@ -54,8 +59,8 @@ class Dashboard extends React.Component {
         })}
         <div className="instructions">
           <ul>
-            <li>This currently only works in "device mode" on browsers or on
-              your phone. Refresh to resize the "phone" once there.</li>
+            <li>This works on desktop web, your browser's device mode, or on your
+              phone. If the aspect ratio looks off in device mode, refresh.</li>
             <li>The icons become draggable if you press and hold one for a second.</li>
             <li>If you swipe right, you'll transition to the next screen.</li>
             <li>To shuffle the icons, try a clockwise circle gesture.</li>
@@ -120,7 +125,11 @@ class Page extends React.Component {
           onSwipeLeft={() => this._onSwipe(1)}
           onSwipeRight={() => this._onSwipe(-1)}
         >
-          <div className="page" onTouchEnd={() => this._onTouchEnd()}>
+          <div
+            className="page"
+            onClick={() => this._onTouchEnd()}
+            onTouchEnd={() => this._onTouchEnd()}
+          >
             {!this.state.iconsDraggable ?
               this.renderHoldableIcons() : this.renderDraggableIcons()}
           </div>

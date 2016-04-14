@@ -147,7 +147,7 @@ describe("Holdable", () => {
     const renderer = TestUtils.createRenderer();
     renderer.render(<Holdable><div></div></Holdable>);
     const output = renderer.getRenderOutput();
-    expect(output.props).to.have.keys(['__passThrough', 'onTouchStart']);
+    expect(output.props).to.have.keys(['__passThrough', 'onMouseDown', 'onTouchStart']);
   });
 
   it("should remove timers and listeners when the component unmounts", () => {

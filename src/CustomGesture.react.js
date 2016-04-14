@@ -18,6 +18,7 @@ class CustomGesture extends React.Component {
   static propTypes = {
     children: T.oneOfType([T.func, T.element]).isRequired,
     config: T.oneOfType([T.string, T.array, T.object]).isRequired,
+    onMouseDown: T.func,
     onTouchStart: T.func,
     onGesture: T.func,
     __passThrough: T.object,
@@ -47,21 +48,14 @@ class CustomGesture extends React.Component {
     this._touchHandler.removeListeners();
   }
 
-  handleTouchStart(evt) {
-    // call child's and own callback from props since we're overwriting it
-    const { children: child } = this.props;
-    child.props.onTouchStart && child.props.onTouchStart(evt);
-    this.props.onTouchStart && this.props.onTouchStart(evt);
-
+  handleTouchStart(touchPosition) {
     // set initial conditions for the touch event
-    const { clientX: x, clientY: y } = evt.nativeEvent.touches[0];
-    this._state = merge({}, this._state, {current: { x, y }});
+    this._state = merge({}, this._state, {current: touchPosition});
   }
 
-  handleTouchMove(evt) {
-    const { clientX: x, clientY: y } = evt.touches[0];
+  handleTouchMove(touchPosition) {
     const { current, moves } = this._state;
-    const { dx, dy } = computeDeltas(current, { x, y });
+    const { dx, dy } = computeDeltas(current, touchPosition);
     const sectorIdx = computeSectorIdx(dx, dy);
 
     this._state = {
@@ -94,12 +88,12 @@ class CustomGesture extends React.Component {
   }
 
   render() {
-    const { children, __passThrough } = this.props;
+    const { onTouchStart, onMouseDown, children, __passThrough } = this.props;
     const child = isFunction(children) ? children(__passThrough) : children;
 
     return React.cloneElement(React.Children.only(child), {
       __passThrough,
-      onTouchStart: evt => this._touchHandler.handleTouchStart(evt, child),
+      ...this._touchHandler.listeners(child, onTouchStart, onMouseDown),
     });
   }
 }

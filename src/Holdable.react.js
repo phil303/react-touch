@@ -16,6 +16,7 @@ class Holdable extends React.Component {
     children: T.oneOfType([T.func, T.element]).isRequired,
     onHoldProgress: T.func,
     onHoldComplete: T.func,
+    onMouseDown: T.func,
     onTouchStart: T.func,
     config: T.object,
     __passThrough: T.object,
@@ -70,11 +71,7 @@ class Holdable extends React.Component {
     return { holdProgress: this.state.duration };
   }
 
-  handleTouchStart(evt, child) {
-    // call child's and own callback from props since we're overwriting it
-    child.props.onTouchStart && child.props.onTouchStart(evt);
-    this.props.onTouchStart && this.props.onTouchStart(evt);
-
+  handleTouchStart() {
     // set initial conditions for the touch event
     const initial = Date.now();
     this.setState(merge({}, this.state, { initial, current: initial }));
@@ -103,13 +100,13 @@ class Holdable extends React.Component {
   }
 
   render() {
-    const { children, __passThrough } = this.props;
+    const { onTouchStart, onMouseDown, children, __passThrough } = this.props;
     const passThrough = { ...__passThrough, ...this.passThroughState() };
     const child = isFunction(children) ? children({ ...passThrough }) : children;
 
     return React.cloneElement(React.Children.only(child), {
       __passThrough: passThrough,
-      onTouchStart: evt => this._touchHandler.handleTouchStart(evt, child),
+      ...this._touchHandler.listeners(child, onTouchStart, onMouseDown),
     });
   }
 }

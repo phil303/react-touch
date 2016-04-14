@@ -103,7 +103,7 @@ describe("CustomGesture", () => {
       </CustomGesture>
     );
     const output = renderer.getRenderOutput();
-    expect(output.props).to.have.keys(['__passThrough', 'onTouchStart']);
+    expect(output.props).to.have.keys(['__passThrough', 'onMouseDown', 'onTouchStart']);
   });
 
   it("should remove listeners when the component unmounts", () => {

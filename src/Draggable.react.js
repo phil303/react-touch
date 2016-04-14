@@ -16,6 +16,7 @@ class Draggable extends React.Component {
   static propTypes = {
     children: T.oneOfType([T.func, T.element]).isRequired,
     position: T.objectOf(T.oneOfType([T.number, T.object])).isRequired,
+    onMouseDown: T.func,
     onTouchStart: T.func,
     onDrag: T.func,
     onDragEnd: T.func,
@@ -39,24 +40,14 @@ class Draggable extends React.Component {
     return { ...current, ...deltas };
   }
 
-  handleTouchStart(evt, child) {
-    // call child's and own callback from props since we're overwriting it
-    child.props.onTouchStart && child.props.onTouchStart(evt);
-    this.props.onTouchStart && this.props.onTouchStart(evt);
-
-    const { clientX, clientY } = evt.nativeEvent.touches[0];
-    const position = { x: clientX, y: clientY };
-    this.setState({ initial: position, current: position });
+  handleTouchStart(touchPosition) {
+    this.setState({ initial: touchPosition, current: touchPosition });
   }
 
-  handleTouchMove(evt) {
-    const { position } = this.props;
+  handleTouchMove(touchPosition) {
     const { deltas, current } = this.state;
-    const { clientX: x, clientY: y } = evt.touches[0];
-
-    const touchPosition = { x, y };
     const touchDeltas = computeDeltas(current, touchPosition);
-    const componentPosition = computePositionStyle(position, touchDeltas);
+    const componentPosition = computePositionStyle(this.props.position, touchDeltas);
     this.props.onDrag && this.props.onDrag(componentPosition);
 
     const latest = {dx: deltas.dx + touchDeltas.dx, dy: deltas.dy + touchDeltas.dy};
@@ -68,13 +59,13 @@ class Draggable extends React.Component {
   }
 
   render() {
-    const { children, __passThrough } = this.props;
+    const { onTouchStart, onMouseDown, children, __passThrough } = this.props;
     const passThrough = { ...__passThrough, ...this.passThroughState() };
     const child = isFunction(children) ? children({ ...passThrough }) : children;
 
     return React.cloneElement(React.Children.only(child), {
       __passThrough: passThrough,
-      onTouchStart: evt => this._touchHandler.handleTouchStart(evt, child),
+      ...this._touchHandler.listeners(child, onTouchStart, onMouseDown),
     });
   }
 }

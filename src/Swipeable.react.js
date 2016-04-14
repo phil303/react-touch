@@ -16,6 +16,7 @@ class Swipeable extends React.Component {
   static propTypes = {
     children: T.oneOfType([T.func, T.element]).isRequired,
     config: T.object,
+    onMouseDown: T.func,
     onTouchStart: T.func,
     __passThrough: T.object,
   };
@@ -45,22 +46,14 @@ class Swipeable extends React.Component {
     return { ...this.state.deltas };
   }
 
-  handleTouchStart(evt) {
-    // call child's and own callback from props since we're overwriting it
-    const { children: child } = this.props;
-    child.props.onTouchStart && child.props.onTouchStart(evt);
-    this.props.onTouchStart && this.props.onTouchStart(evt);
-
-    const { clientX, clientY } = evt.nativeEvent.touches[0];
-    const position = { x: clientX, y: clientY };
-
-    this.setState(merge({}, this.state, {initial: position, current: position}));
+  handleTouchStart(touchPosition) {
+    this.setState(merge({}, this.state, {
+      initial: touchPosition,
+      current: touchPosition,
+    }));
   }
 
-  handleTouchMove(evt) {
-    const { clientX: x, clientY: y } = evt.touches[0];
-    const touchPosition = { x, y };
-
+  handleTouchMove(touchPosition) {
     this.setState(merge({}, this.state, { current: touchPosition }));
 
     DIRECTIONS.forEach(direction => {
@@ -86,13 +79,13 @@ class Swipeable extends React.Component {
   }
 
   render() {
-    const { children, __passThrough } = this.props;
+    const { onTouchStart, onMouseDown, children, __passThrough } = this.props;
     const passThrough = { ...__passThrough, ...this.passThroughState() };
     const child = isFunction(children) ? children({ ...passThrough }) : children;
 
     return React.cloneElement(React.Children.only(child), {
       __passThrough: passThrough,
-      onTouchStart: evt => this._touchHandler.handleTouchStart(evt, child),
+      ...this._touchHandler.listeners(child, onTouchStart, onMouseDown),
     });
   }
 }

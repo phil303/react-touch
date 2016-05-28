@@ -3,7 +3,7 @@
 [![codecov.io](https://codecov.io/github/phil303/react-touch/coverage.svg?branch=master)](https://codecov.io/github/phil303/react-touch?branch=master)
 [![NPM Version](https://img.shields.io/npm/v/react-touch.svg?style=flat)](https://www.npmjs.com/package/react-touch) 
 
-React-Touch is a set of wrapper components that handle touch events in a more declarative way. This library is still a WIP - test coverage is good but the API is probably going to shift in the comings days. 
+React-Touch is a set of wrapper components that handle touch interactions in a more declarative way, abstracting out and giving you hooks into behaviors such as dragging, holding, swiping, and custom gestures. React-Touch also works with mouse events as well.
 
 Here's a quick example of the API.
 
@@ -24,7 +24,7 @@ npm install react-touch --save
   - [Emulating a Smartphone Dashboard](http://phil303.github.io/react-touch/examples/smartphone-dashboard/)
 
 ## What Does This Library Do?
-If you've ever written mobile web software, then you might've found yourself needing the ability to touch drag a component, measure a hold, or handle a swipe. This library aims to make all that simpler by abstracting away the details so you can wrap your component and move on.
+If you've ever written mobile web software, then you might've found yourself needing the ability to touch drag a component, measure a hold, or react to a swipe or gesture. This library is a set of higher level React components that abstract out the details of those things so you can wrap your components and move on.
 
 ## API
 Exports:

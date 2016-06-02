@@ -1,6 +1,6 @@
 {
   "name": "react-touch",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "React wrapper components that make touch events easy",
   "main": "./lib/index.js",
   "repository": {
@@ -33,7 +33,7 @@
   },
   "homepage": "https://github.com/phil303/react-touch",
   "peerDependencies": {
-    "react": "^0.14"
+    "react": "^0.14 || ^15.0"
   },
   "dependencies": {
     "lodash": "4.6.1",

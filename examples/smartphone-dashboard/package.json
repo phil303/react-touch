@@ -13,7 +13,7 @@
   },
   "homepage": "https://github.com/phil303/react-touch",
   "dependencies": {
-    "react": "^0.14",
+    "react": "^15.0",
     "lodash": "4.6.1",
     "react-motion": "0.4.2"
   }

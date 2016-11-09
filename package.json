@@ -37,12 +37,11 @@
   },
   "dependencies": {
     "lodash.clamp": "^4.0.3",
-    "lodash.isarray": "^4.0.0",
     "lodash.isfunction": "^3.0.8",
     "lodash.isobject": "^3.0.2",
-    "lodash.merge": "^4.6.0",
     "lodash.range": "^3.2.0",
     "lodash.times": "^4.3.2",
+    "object-assign": "^4.1.0",
     "raf": "3.2.0"
   },
   "devDependencies": {

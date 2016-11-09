@@ -1,8 +1,9 @@
 import React from 'react';
 import TestUtils from 'react-addons-test-utils';
+import objectAssign from 'object-assign';
 
 export const documentEvent = (eventName, props={}) => {
-  const evt = Object.assign(document.createEvent("HTMLEvents"), props);
+  const evt = objectAssign(document.createEvent("HTMLEvents"), props);
   evt.initEvent(eventName, true, true);
   document.dispatchEvent(evt);
 };

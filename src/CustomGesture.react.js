@@ -1,7 +1,6 @@
 import React from 'react';
 import isFunction from 'lodash.isfunction';
-import isArray from 'lodash.isarray';
-import merge from 'lodash.merge';
+import objectAssign from 'object-assign';
 
 import TouchHandler from './TouchHandler';
 import computeDeltas from './computeDeltas';
@@ -50,7 +49,7 @@ class CustomGesture extends React.Component {
 
   handleTouchStart(touchPosition) {
     // set initial conditions for the touch event
-    this._state = merge({}, this._state, {current: touchPosition});
+    this._state = objectAssign({}, this._state, {current: touchPosition});
   }
 
   handleTouchMove(touchPosition) {
@@ -73,7 +72,7 @@ class CustomGesture extends React.Component {
       return;
     }
 
-    const gesture = isArray(config.gesture) ? config.gesture.join("") : config.gesture;
+    const gesture = Array.isArray(config.gesture) ? config.gesture.join("") : config.gesture;
     const distance = gestureLevenshtein(this._state.moves.join(""), gesture);
 
     if (distance < config.fudgeFactor) {

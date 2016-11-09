@@ -3,8 +3,8 @@ import sinon from 'sinon';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import TestUtils from 'react-addons-test-utils';
-import omitBy from 'lodash/omitBy';
-import isNull from 'lodash/isNull';
+import omitBy from 'lodash.omitby';
+import isNull from 'lodash.isnull';
 
 import { documentEvent, renderComponent, createFakeRaf, nativeTouch } from './helpers';
 import Swipeable from '../Swipeable.react';

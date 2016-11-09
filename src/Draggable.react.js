@@ -1,5 +1,5 @@
 import React from 'react';
-import isFunction from 'lodash/isFunction';
+import isFunction from 'lodash.isfunction';
 
 import TouchHandler from './TouchHandler';
 import computePositionStyle from './computePositionStyle';

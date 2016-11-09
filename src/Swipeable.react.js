@@ -1,6 +1,6 @@
 import React from 'react';
-import isFunction from 'lodash/isFunction';
-import merge from 'lodash/merge';
+import isFunction from 'lodash.isfunction';
+import objectAssign from 'object-assign';
 
 import TouchHandler from './TouchHandler';
 import defineSwipe from './defineSwipe';
@@ -47,14 +47,14 @@ class Swipeable extends React.Component {
   }
 
   handleTouchStart(touchPosition) {
-    this.setState(merge({}, this.state, {
+    this.setState(objectAssign({}, this.state, {
       initial: touchPosition,
       current: touchPosition,
     }));
   }
 
   handleTouchMove(touchPosition) {
-    this.setState(merge({}, this.state, { current: touchPosition }));
+    this.setState(objectAssign({}, this.state, { current: touchPosition }));
 
     DIRECTIONS.forEach(direction => {
       const name = `onSwipe${direction}`;
@@ -75,7 +75,7 @@ class Swipeable extends React.Component {
   _resetState() {
     this._touchHandler.cancelAnimationFrame();
     this._handlerFired = {};
-    this.setState(merge({}, this.state, DEFAULT_STATE));
+    this.setState(objectAssign({}, this.state, DEFAULT_STATE));
   }
 
   render() {

@@ -1,6 +1,6 @@
 import React from 'react';
-import isFunction from 'lodash/isFunction';
-import merge from 'lodash/merge';
+import isFunction from 'lodash.isfunction';
+import merge from 'lodash.merge';
 
 import TouchHandler from './TouchHandler';
 import defineSwipe from './defineSwipe';

@@ -3,7 +3,7 @@ import sinon from 'sinon';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import TestUtils from 'react-addons-test-utils';
-import times from 'lodash/times';
+import times from 'lodash.times';
 
 import { documentEvent, renderComponent, createFakeRaf, nativeTouch } from './helpers';
 import moves from '../gestureMoves';

@@ -1,7 +1,7 @@
 import React from 'react';
-import isFunction from 'lodash/isFunction';
-import isArray from 'lodash/isArray';
-import merge from 'lodash/merge';
+import isFunction from 'lodash.isfunction';
+import isArray from 'lodash.isarray';
+import merge from 'lodash.merge';
 
 import TouchHandler from './TouchHandler';
 import computeDeltas from './computeDeltas';

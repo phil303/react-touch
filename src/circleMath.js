@@ -1,4 +1,4 @@
-import range from 'lodash/range';
+import range from 'lodash.range';
 
 const DIRECTIONS = 8;
 const RESOLUTION = 128;

@@ -1,4 +1,4 @@
-import times from 'lodash/times';
+import times from 'lodash.times';
 import { sectorDistance } from './circleMath';
 
 const BIG_NUM = 10000;

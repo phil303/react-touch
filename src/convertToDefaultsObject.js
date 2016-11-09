@@ -1,5 +1,5 @@
-import isArray from 'lodash/isArray';
-import isObject from 'lodash/isObject';
+import isArray from 'lodash.isarray';
+import isObject from 'lodash.isobject';
 
 const convertToDefaultsObject = (value, mainKey='main', defaultValues={}) => {
   if (isArray(value) || !isObject(value)) {

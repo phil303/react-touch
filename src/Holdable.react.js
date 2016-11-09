@@ -1,7 +1,7 @@
 import React from 'react';
-import isFunction from 'lodash/isFunction';
-import merge from 'lodash/merge';
-import clamp from 'lodash/clamp';
+import isFunction from 'lodash.isfunction';
+import merge from 'lodash.merge';
+import clamp from 'lodash.clamp';
 
 import defineHold from './defineHold';
 import TouchHandler from './TouchHandler';

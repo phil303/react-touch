@@ -4,7 +4,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import TestUtils from 'react-addons-test-utils';
 
-import { documentEvent, renderComponent } from './helpers';
+import { documentEvent, renderComponent, ExampleComponent } from './helpers';
 import Holdable from '../Holdable.react';
 import defineHold from '../defineHold';
 
@@ -145,9 +145,16 @@ describe("Holdable", () => {
 
   it("should pass the correct props to its child", () => {
     const renderer = TestUtils.createRenderer();
-    renderer.render(<Holdable><div></div></Holdable>);
+    renderer.render(<Holdable><ExampleComponent></ExampleComponent></Holdable>);
     const output = renderer.getRenderOutput();
     expect(output.props).to.have.keys(['__passThrough', 'onMouseDown', 'onTouchStart']);
+  });
+
+  it("should not pass custom props down to DOM nodes", () => {
+    const renderer = TestUtils.createRenderer();
+    renderer.render(<Holdable><div></div></Holdable>);
+    const output = renderer.getRenderOutput();
+    expect(output.props).to.have.keys(['onMouseDown', 'onTouchStart']);
   });
 
   it("should remove timers and listeners when the component unmounts", () => {

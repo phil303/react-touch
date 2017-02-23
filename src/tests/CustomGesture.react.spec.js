@@ -5,7 +5,7 @@ import ReactDOM from 'react-dom';
 import TestUtils from 'react-addons-test-utils';
 import times from 'lodash/times';
 
-import { documentEvent, renderComponent, createFakeRaf, nativeTouch } from './helpers';
+import { documentEvent, renderComponent, createFakeRaf, nativeTouch, ExampleComponent } from './helpers';
 import moves from '../gestureMoves';
 import CustomGesture from '../CustomGesture.react';
 import TouchHandler from '../TouchHandler';
@@ -99,11 +99,22 @@ describe("CustomGesture", () => {
     const renderer = TestUtils.createRenderer();
     renderer.render(
       <CustomGesture>
-        <div></div>
+        <ExampleComponent></ExampleComponent>
       </CustomGesture>
     );
     const output = renderer.getRenderOutput();
     expect(output.props).to.have.keys(['__passThrough', 'onMouseDown', 'onTouchStart']);
+  });
+
+  it("should not pass custom props down to DOM nodes", () => {
+    const renderer = TestUtils.createRenderer();
+    renderer.render(
+      <CustomGesture>
+        <div></div>
+      </CustomGesture>
+    );
+    const output = renderer.getRenderOutput();
+    expect(output.props).to.have.keys(['onMouseDown', 'onTouchStart']);
   });
 
   it("should remove listeners when the component unmounts", () => {

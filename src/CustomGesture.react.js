@@ -90,11 +90,13 @@ class CustomGesture extends React.Component {
   render() {
     const { onTouchStart, onMouseDown, children, __passThrough } = this.props;
     const child = isFunction(children) ? children(__passThrough) : children;
-
-    return React.cloneElement(React.Children.only(child), {
-      __passThrough,
+    const props = {
       ...this._touchHandler.listeners(child, onTouchStart, onMouseDown),
-    });
+    };
+
+    if (typeof child.type !== 'string') props.__passThrough = __passThrough;
+
+    return React.cloneElement(React.Children.only(child), props);
   }
 }
 

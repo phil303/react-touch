@@ -82,11 +82,13 @@ class Swipeable extends React.Component {
     const { onTouchStart, onMouseDown, children, __passThrough } = this.props;
     const passThrough = { ...__passThrough, ...this.passThroughState() };
     const child = isFunction(children) ? children({ ...passThrough }) : children;
-
-    return React.cloneElement(React.Children.only(child), {
-      __passThrough: passThrough,
+    const props = {
       ...this._touchHandler.listeners(child, onTouchStart, onMouseDown),
-    });
+    };
+
+    if (typeof child.type !== 'string') props.__passThrough = passThrough;
+
+    return React.cloneElement(React.Children.only(child), props);
   }
 }
 

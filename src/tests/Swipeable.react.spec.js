@@ -6,7 +6,7 @@ import TestUtils from 'react-addons-test-utils';
 import omitBy from 'lodash/omitBy';
 import isNull from 'lodash/isNull';
 
-import { documentEvent, renderComponent, createFakeRaf, nativeTouch } from './helpers';
+import { documentEvent, renderComponent, createFakeRaf, nativeTouch, ExampleComponent } from './helpers';
 import Swipeable from '../Swipeable.react';
 import defineSwipe from '../defineSwipe';
 import TouchHandler from '../TouchHandler';
@@ -78,9 +78,16 @@ describe("Swipeable", () => {
 
   it("should pass the correct props to its child", () => {
     const renderer = TestUtils.createRenderer();
-    renderer.render(<Swipeable><div></div></Swipeable>);
+    renderer.render(<Swipeable><ExampleComponent></ExampleComponent></Swipeable>);
     const output = renderer.getRenderOutput();
     expect(output.props).to.have.keys(['__passThrough', 'onMouseDown', 'onTouchStart']);
+  });
+
+  it("should not pass custom props down to DOM nodes", () => {
+    const renderer = TestUtils.createRenderer();
+    renderer.render(<Swipeable><div></div></Swipeable>);
+    const output = renderer.getRenderOutput();
+    expect(output.props).to.have.keys(['onMouseDown', 'onTouchStart']);
   });
 
   it("should remove listeners when the component unmounts", () => {

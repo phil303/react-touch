@@ -4,7 +4,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import TestUtils from 'react-addons-test-utils';
 
-import { documentEvent, renderComponent, createFakeRaf, nativeTouch } from './helpers';
+import { documentEvent, renderComponent, createFakeRaf, nativeTouch, ExampleComponent } from './helpers';
 import Draggable from '../Draggable.react';
 import TouchHandler from '../TouchHandler';
 
@@ -127,10 +127,21 @@ describe("Draggable", () => {
     const renderer = TestUtils.createRenderer();
     renderer.render(
       <Draggable position={{translateX: 100, translateY: 100}}>
-        <div></div>
+        <ExampleComponent></ExampleComponent>
       </Draggable>
     );
     const output = renderer.getRenderOutput();
     expect(output.props).to.have.keys(['__passThrough', 'onMouseDown', 'onTouchStart']);
+  });
+
+  it("should not pass custom props down to DOM nodes", () => {
+    const renderer = TestUtils.createRenderer();
+    renderer.render(
+      <Draggable position={{translateX: 100, translateY: 100}}>
+        <div></div>
+      </Draggable>
+    );
+    const output = renderer.getRenderOutput();
+    expect(output.props).to.have.keys(['onMouseDown', 'onTouchStart']);
   });
 });

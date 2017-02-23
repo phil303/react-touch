@@ -145,7 +145,7 @@ describe("Holdable", () => {
 
   it("should pass the correct props to its child", () => {
     const renderer = TestUtils.createRenderer();
-    renderer.render(<Holdable><ExampleComponent></ExampleComponent></Holdable>);
+    renderer.render(<Holdable><ExampleComponent /></Holdable>);
     const output = renderer.getRenderOutput();
     expect(output.props).to.have.keys(['__passThrough', 'onMouseDown', 'onTouchStart']);
   });

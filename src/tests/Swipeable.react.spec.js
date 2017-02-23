@@ -6,7 +6,8 @@ import TestUtils from 'react-addons-test-utils';
 import omitBy from 'lodash/omitBy';
 import isNull from 'lodash/isNull';
 
-import { documentEvent, renderComponent, createFakeRaf, nativeTouch, ExampleComponent } from './helpers';
+import { documentEvent, renderComponent, createFakeRaf,
+  nativeTouch, ExampleComponent } from './helpers';
 import Swipeable from '../Swipeable.react';
 import defineSwipe from '../defineSwipe';
 import TouchHandler from '../TouchHandler';
@@ -78,7 +79,7 @@ describe("Swipeable", () => {
 
   it("should pass the correct props to its child", () => {
     const renderer = TestUtils.createRenderer();
-    renderer.render(<Swipeable><ExampleComponent></ExampleComponent></Swipeable>);
+    renderer.render(<Swipeable><ExampleComponent /></Swipeable>);
     const output = renderer.getRenderOutput();
     expect(output.props).to.have.keys(['__passThrough', 'onMouseDown', 'onTouchStart']);
   });

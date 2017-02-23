@@ -4,7 +4,8 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import TestUtils from 'react-addons-test-utils';
 
-import { documentEvent, renderComponent, createFakeRaf, nativeTouch, ExampleComponent } from './helpers';
+import { documentEvent, renderComponent, createFakeRaf,
+  nativeTouch, ExampleComponent } from './helpers';
 import Draggable from '../Draggable.react';
 import TouchHandler from '../TouchHandler';
 
@@ -127,7 +128,7 @@ describe("Draggable", () => {
     const renderer = TestUtils.createRenderer();
     renderer.render(
       <Draggable position={{translateX: 100, translateY: 100}}>
-        <ExampleComponent></ExampleComponent>
+        <ExampleComponent />
       </Draggable>
     );
     const output = renderer.getRenderOutput();

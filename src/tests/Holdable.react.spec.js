@@ -143,12 +143,30 @@ describe("Holdable", () => {
     expect(output.type).to.be.equal('div');
   });
 
-  it("should pass the correct props to its child", () => {
+  it("should pass the correct props to nested react-touch components", () => {
+    const renderer = TestUtils.createRenderer();
+    renderer.render(<Holdable>
+      <Holdable><div></div></Holdable>
+    </Holdable>);
+    const output = renderer.getRenderOutput();
+    expect(output.props).to.have.keys([
+      '__passThrough',
+      'children',
+      'config',
+      'onMouseDown',
+      'onTouchStart',
+      'onHoldComplete',
+      'onHoldProgress',
+    ]);
+  });
+
+  it("should not pass custom props to its children", () => {
     const renderer = TestUtils.createRenderer();
     renderer.render(<Holdable><ExampleComponent /></Holdable>);
     const output = renderer.getRenderOutput();
-    expect(output.props).to.have.keys(['__passThrough', 'onMouseDown', 'onTouchStart']);
+    expect(output.props).to.have.keys(['onMouseDown', 'onTouchStart']);
   });
+
 
   it("should not pass custom props down to DOM nodes", () => {
     const renderer = TestUtils.createRenderer();

@@ -107,7 +107,9 @@ class Holdable extends React.Component {
       ...this._touchHandler.listeners(child, onTouchStart, onMouseDown),
     };
 
-    if (typeof child.type !== 'string') props.__passThrough = passThrough;
+    if (child.type.propTypes && child.type.propTypes.hasOwnProperty('__passThrough')) {
+      props.__passThrough = passThrough;
+    }
 
     return React.cloneElement(React.Children.only(child), props);
   }

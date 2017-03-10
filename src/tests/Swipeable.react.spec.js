@@ -77,11 +77,26 @@ describe("Swipeable", () => {
     expect(output.type).to.be.equal('div');
   });
 
-  it("should pass the correct props to its child", () => {
+  it("should pass the correct props to nested react-touch components", () => {
+    const renderer = TestUtils.createRenderer();
+    renderer.render(<Swipeable>
+      <Swipeable><div></div></Swipeable>
+    </Swipeable>);
+    const output = renderer.getRenderOutput();
+    expect(output.props).to.have.keys([
+      '__passThrough',
+      'children',
+      'config',
+      'onMouseDown',
+      'onTouchStart',
+    ]);
+  });
+
+  it("should not pass custom props to its children", () => {
     const renderer = TestUtils.createRenderer();
     renderer.render(<Swipeable><ExampleComponent /></Swipeable>);
     const output = renderer.getRenderOutput();
-    expect(output.props).to.have.keys(['__passThrough', 'onMouseDown', 'onTouchStart']);
+    expect(output.props).to.have.keys(['onMouseDown', 'onTouchStart']);
   });
 
   it("should not pass custom props down to DOM nodes", () => {

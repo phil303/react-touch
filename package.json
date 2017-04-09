@@ -1,6 +1,6 @@
 {
   "name": "react-touch",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "React wrapper components that make touch events easy",
   "main": "./lib/index.js",
   "repository": {

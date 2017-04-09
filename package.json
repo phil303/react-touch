@@ -5,7 +5,7 @@
   "main": "./lib/index.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/phil303/react-touch"
+    "url": "https://github.com/leonaves/react-touch"
   },
   "scripts": {
     "build": "babel src --out-dir lib",
@@ -26,12 +26,15 @@
     "react-touch",
     "touch"
   ],
-  "author": "Phil Aquilina <philaquilina@gmail.com> (http://github.com/phil303)",
+  "author": "Phil Aquilina",
+  "contributors": [
+    "Leon Aves <me@leonaves.com> (https://github.com/leonaves)"
+  ],
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/phil303/react-touch/issues"
+    "url": "https://github.com/leonaves/react-touch/issues"
   },
-  "homepage": "https://github.com/phil303/react-touch",
+  "homepage": "https://github.com/leonaves/react-touch",
   "peerDependencies": {
     "react": "^0.14 || ^15.0"
   },

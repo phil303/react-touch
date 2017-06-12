@@ -1,4 +1,5 @@
 import React from 'react';
+import { PropTypes as T } from 'prop-types';
 import isFunction from 'lodash/isFunction';
 import merge from 'lodash/merge';
 import clamp from 'lodash/clamp';
@@ -7,7 +8,6 @@ import defineHold from './defineHold';
 import TouchHandler from './TouchHandler';
 
 
-const T = React.PropTypes;
 const DEFAULT_HOLD = { initial: null, current: null, duration: 0 };
 
 class Holdable extends React.Component {

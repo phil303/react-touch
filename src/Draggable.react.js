@@ -1,4 +1,5 @@
 import React from 'react';
+import { PropTypes as T } from 'prop-types';
 import isFunction from 'lodash/isFunction';
 
 import TouchHandler from './TouchHandler';
@@ -6,7 +7,6 @@ import computePositionStyle from './computePositionStyle';
 import computeDeltas from './computeDeltas';
 
 
-const T = React.PropTypes;
 const ZERO_DELTAS = { dx: 0, dy: 0 };
 const DEFAULT_TOUCH = { initial: null, current: null, deltas: ZERO_DELTAS };
 

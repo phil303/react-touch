@@ -1,4 +1,5 @@
 import React from 'react';
+import { PropTypes as T } from 'prop-types';
 import isFunction from 'lodash/isFunction';
 import isArray from 'lodash/isArray';
 import merge from 'lodash/merge';
@@ -9,7 +10,6 @@ import gestureLevenshtein from './gestureLevenshtein';
 import convertToDefaultsObject from './convertToDefaultsObject';
 import { createSectors, computeSectorIdx } from './circleMath';
 
-const T = React.PropTypes;
 
 const INITIAL_STATE = { current: null, moves: [] };
 const DEFAULT_CONFIG = { fudgeFactor: 5, minMoves: 8, gesture: "" };

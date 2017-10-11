@@ -1,12 +1,11 @@
 import React from 'react';
+import { PropTypes as T } from 'prop-types';
 import isFunction from 'lodash/isFunction';
 import merge from 'lodash/merge';
 
 import TouchHandler from './TouchHandler';
 import defineSwipe from './defineSwipe';
 
-
-const T = React.PropTypes;
 const DIRECTIONS = ['Left', 'Right', 'Up', 'Down'];
 const ZERO_DELTAS = { dx: 0, dy: 0 };
 const DEFAULT_STATE = { initial: null, current: null, deltas: ZERO_DELTAS };

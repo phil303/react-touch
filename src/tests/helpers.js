@@ -12,6 +12,8 @@ export const renderComponent = component => {
   return props => TestUtils.renderIntoDocument(_component(props, <div></div>));
 };
 
+export const ExampleComponent = () => <div></div>;
+
 export const nativeTouch = (x, y) => ({touches: [{ clientX: x, clientY: y }]});
 
 export const createFakeRaf = () => {

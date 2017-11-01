@@ -1,4 +1,5 @@
 import React from 'react';
+import { PropTypes as T } from 'prop-types';
 import isFunction from 'lodash/isFunction';
 
 import TouchHandler from './TouchHandler';
@@ -6,7 +7,6 @@ import computePositionStyle from './computePositionStyle';
 import computeDeltas from './computeDeltas';
 
 
-const T = React.PropTypes;
 const ZERO_DELTAS = { dx: 0, dy: 0 };
 const DEFAULT_TOUCH = { initial: null, current: null, deltas: ZERO_DELTAS };
 
@@ -62,11 +62,15 @@ class Draggable extends React.Component {
     const { onTouchStart, onMouseDown, children, __passThrough } = this.props;
     const passThrough = { ...__passThrough, ...this.passThroughState() };
     const child = isFunction(children) ? children({ ...passThrough }) : children;
-
-    return React.cloneElement(React.Children.only(child), {
-      __passThrough: passThrough,
+    const props = {
       ...this._touchHandler.listeners(child, onTouchStart, onMouseDown),
-    });
+    };
+
+    if (child.type.propTypes && child.type.propTypes.hasOwnProperty('__passThrough')) {
+      props.__passThrough = passThrough;
+    }
+
+    return React.cloneElement(React.Children.only(child), props);
   }
 }
 

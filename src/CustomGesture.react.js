@@ -1,4 +1,5 @@
 import React from 'react';
+import { PropTypes as T } from 'prop-types';
 import isFunction from 'lodash/isFunction';
 import isArray from 'lodash/isArray';
 import merge from 'lodash/merge';
@@ -9,7 +10,6 @@ import gestureLevenshtein from './gestureLevenshtein';
 import convertToDefaultsObject from './convertToDefaultsObject';
 import { createSectors, computeSectorIdx } from './circleMath';
 
-const T = React.PropTypes;
 
 const INITIAL_STATE = { current: null, moves: [] };
 const DEFAULT_CONFIG = { fudgeFactor: 5, minMoves: 8, gesture: "" };
@@ -90,11 +90,15 @@ class CustomGesture extends React.Component {
   render() {
     const { onTouchStart, onMouseDown, children, __passThrough } = this.props;
     const child = isFunction(children) ? children(__passThrough) : children;
-
-    return React.cloneElement(React.Children.only(child), {
-      __passThrough,
+    const props = {
       ...this._touchHandler.listeners(child, onTouchStart, onMouseDown),
-    });
+    };
+
+    if (child.type.propTypes && child.type.propTypes.hasOwnProperty('__passThrough')) {
+      props.__passThrough = __passThrough;
+    }
+
+    return React.cloneElement(React.Children.only(child), props);
   }
 }
 

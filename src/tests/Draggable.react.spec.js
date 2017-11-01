@@ -4,7 +4,8 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import TestUtils from 'react-addons-test-utils';
 
-import { documentEvent, renderComponent, createFakeRaf, nativeTouch } from './helpers';
+import { documentEvent, renderComponent, createFakeRaf,
+  nativeTouch, ExampleComponent } from './helpers';
 import Draggable from '../Draggable.react';
 import TouchHandler from '../TouchHandler';
 
@@ -123,7 +124,38 @@ describe("Draggable", () => {
     expect(output.type).to.be.equal('div');
   });
 
-  it("should pass the correct props to its child", () => {
+  it("should pass the correct props to nested react-touch components", () => {
+    const renderer = TestUtils.createRenderer();
+    renderer.render(
+      <Draggable position={{translateX: 100, translateY: 100}}>
+        <Draggable position={{translateX: 100, translateY: 100}}>
+          <ExampleComponent />
+        </Draggable>
+      </Draggable>
+    );
+    const output = renderer.getRenderOutput();
+    expect(output.props).to.have.keys([
+      '__passThrough',
+      'children',
+      'position',
+      'onMouseDown',
+      'onTouchStart',
+    ]);
+  });
+
+
+  it("should not pass custom props to its children", () => {
+    const renderer = TestUtils.createRenderer();
+    renderer.render(
+      <Draggable position={{translateX: 100, translateY: 100}}>
+        <ExampleComponent />
+      </Draggable>
+    );
+    const output = renderer.getRenderOutput();
+    expect(output.props).to.have.keys(['onMouseDown', 'onTouchStart']);
+  });
+
+  it("should not pass custom props down to DOM nodes", () => {
     const renderer = TestUtils.createRenderer();
     renderer.render(
       <Draggable position={{translateX: 100, translateY: 100}}>
@@ -131,6 +163,6 @@ describe("Draggable", () => {
       </Draggable>
     );
     const output = renderer.getRenderOutput();
-    expect(output.props).to.have.keys(['__passThrough', 'onMouseDown', 'onTouchStart']);
+    expect(output.props).to.have.keys(['onMouseDown', 'onTouchStart']);
   });
 });
